@@ -1,0 +1,91 @@
+package org.apache.ydata.utils;
+
+import org.apache.commons.codec.binary.Base64;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
+public class AESTools {
+    // 加密
+    public static String encrypt(String sSrc, String sKey) throws Exception {
+        if (sKey == null) {
+            System.out.print("Key为空null");
+            return null;
+        }
+        // 判断Key是否为16位
+        if (sKey.length() != 16 && sKey.length() != 32) {
+            System.out.print("Key长度不是16位");
+            return null;
+        }
+        byte[] raw = sKey.getBytes("utf-8");
+        SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");//"算法/模式/补码方式"
+        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+        byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8"));
+
+        return new Base64().encodeToString(encrypted);//此处使用BASE64做转码功能，同时能起到2次加密的作用。
+    }
+
+    // 解密
+    public static String decrypt(String sSrc, String sKey) throws Exception {
+        try {
+            // 判断Key是否正确
+            if (sKey == null) {
+                System.out.print("Key为空null");
+                return null;
+            }
+            // 判断Key是否为16位
+            if (sKey.length() != 16 && sKey.length() != 32) {
+                System.out.print("Key长度错误");
+                return null;
+            }
+//            if(sKey.length() == 32) {
+//                sKey = sKey.substring()
+//            }
+            byte[] raw = sKey.getBytes("utf-8");
+            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+
+            byte[] encrypted1 = new Base64().decode(sSrc);//先用base64解密
+            try {
+                byte[] original = cipher.doFinal(encrypted1);
+                String originalString = new String(original,"utf-8");
+                return originalString;
+            } catch (Exception e) {
+                System.out.println(e.toString());
+                return null;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+            return null;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        AESTools se = new AESTools();
+        /*
+         * 加密
+         */
+//        System.out.println("使用AES对称加密，请输入加密的规则");
+//        String key = "nx9XRONRIF4HPFFM";
+//        String key = "052ca0759e31d3d36dc073dd1932a744";
+//        String content = "ABCViewController";
+//        System.out.println("要加密的内容：" + content);
+//        String encodeContent = encrypt(content, key);
+//        String encodeContent = "VtWL7jFoMU47uiC0wsnDBr7bHjtf0TZ6ooU8XKxhuEzLMoeVtDok7wJPtKvtjFDQ52iG6k6Mo3PkZKBZKtPny1ZeCy+tD6dgQzrZrX5YXgwX0SgJ/es23eZCHx7C87sYOSrW9vaplaBnqJzM53lo9LrvoEeOBSrfGERfWineEhMv4IxMp436yB1upk7b8KEz";
+//        System.out.println("密钥："+key+", 加密后的密文是："+encodeContent);
+
+        /*
+         * 解密
+         */
+        System.out.println("使用AES对称解密，请输入加密的规则：(须与加密相同)");
+//        encodeRules=scanner.next();
+//        System.out.println("请输入要解密的内容（密文）:");
+//        content = encodeContent;
+//        String encodeContent = "UAkZ/RWblX4kM8CsfdG42g==";  //30.549955
+//        String encodeContent = "L7hRlM3lrw7ztjDU8hV7iQ==";  //104.070737
+        String key = "96fd2da9c64779e45269ff9a474745db";
+        String encodeContent = "amNET2VGd1lPYmhnM2JQTGpmWURZVXVSdndsNWM4R2FoemlhSlprRmxOeDYvcUhFR0kvbVQvUG9ObUNQRk5GUzdrSk81V0wxbkJSSWtYU0VyRXFyYUxvVFZKL2pWL0FSS2NhWUFmbTRYVXRrNFdaVmZhY25SV21CWkpsdzRNWll3b0dQeHNaTGdmNjEzaXZ1Q1ZaVDlpdVBEa1BaL3VOZERJMlpIQ2FNOUJrUTd1QkRPVmNqRndZN1A0MDRwOTZoV28xMEhrMXprREYzdnRVQkFaWTBNUFl5QTVwQ1Z0YnQwVUNuU0tjZG5kL0hsT05wdFIwUlI5aWwrNXdsdjBiQ1FwM1l2bWVsMk9kYUVRTUlnQWNsa0V1ZzNaNk92NkVHRlQvZkVZeW9KYWtjU3ZMNjk0OEgrc0Y1TElEUWpTaDhtWWhndGRzdU1NLzhEU1psRG1yeUdOYm1UMHVjUHp0YUZxMG9nVGJNZzI2YWVuWFZtZHI2bTRyRU50SWxZaytyendKM1VVZTVacWZJNDJuUzc4alpIZURaMC9ZZk14UExjbVl5QkRkcVpwZURaQWVNcjZzRHpQOUNwNnpEUEd3dVJCZ09DM1o5UGpMYk8vSitCenk4YUw5NnF1OEg5NkZTaGVDaElTUWEyYUllK0I3RWdqWFU4WjUxUXlvRklPbUozTVFGMk1FcUlMTkd4MC9reDkzczd3SUp1RSsrdXJJdWI0Q2hPL2FPcVB3bnRwRGlRU28xaElCSnlaTVp2Q0hMM0pTaUF4eWUyWmlDOEN2TnV4c0JxKzVDVHVWaTlad1VTSkYwaEt4S3EyajAzQ1BrcTQwL05yczhZb2NEYW4xOTdSWkx6Y3VGekR4VE1XU216R0Y5T0N2aFhRMTFUYzEwT0xlQ1Jrc1F2bXlaWHo2bld0bnNZcUl4MUxtR1U1Q2RYbENZNSsrZG4rVTRZMjhZRjRWNUR4S1NWbVp3UWdtN3ZlK0NIaGpIVHdiN0EzTTV2eG54MXQ4aWtmN0k0aktaaFZkdHovQllKT2dKOHNmcW1HcFhkcHlRbm4xcW85c2NIUkNKMmtwRGNQQnRYa0Z3UGJFOG5kb1A2a1NUMldnL2Jaa29BUTZXUXBiUEtRSy9wWThxdFlJMW1QNG1Vc2J3YWZOMGVyYUxwRXNPcnZIQUFka2FpWVQ3bFBHMWJETnNJd0MrR0hIUkhMcnUvaCtabXFkYmpIcWl5TmUxUTdVdWtuYmEvS3oyOE9ST0NrNmtadC9RQndvWFpPSEZML1ZpQ1VEU1NDQ0xJYk5pYVNpSk5aNDY5c1U4cGhRam1ZM1RmaUVXeS9xVjlPTVkzNUh5UlBSczZEZEF1N0cyVTd1TzM0RXcxdUQ4MFNUekJBeklKblB5ZHZONXhXSlN4SXlhd1NYM1RqVDVObzBDQ2JoUHZycXlMbStBb1R2MmpxajhqNXVHWjluN2hIaE9ISEMwQjhrMHFLVlBBTXl4TnFEV1JnckJRRDRVdWE3dVFrN2xZdldjRkVpUmRJU3NTcXRvMHNXckFDZFQ0cGhpU2h1SzVVY1BTRE5qcXZsZGtnWnUxOTE1ZGJLREhiUWNuMGNIeVRrL3o3YnBTU0Y2YXRHUEc4UG5obVErU3RKY253dVpLTnp5OFkrMHhGaG9MRmJaNXVZOHc2b2VDRjJWVExabGxGbTJTWitVeGFZZWNNRVN6YXNYMUlUc3h5TFFCNzhBbWRsRG1zM3FBYmR4WFYrcURwVUdhRnI2Ykpzb3BNYm5YRFJ4YmhrQUNVQmo5NXpEZEFqNnFDRUZQQTZXUlNzaU8zazRrNVpONGRwTjVzZTBOUmM0NjV0RkVkaHB6a2hWYXBSeFRwOWRlZXp3eitWTk9wU0s2ZjByeWhiY3MzZlE3VmVySk1ocEYrMGp0RFl2eEhIcy9nd0tNamhMMlZrOFNIOVFTVTdLK1I0QUtSaVlUZ3BPcEdiZjBBY0tGMlRoeFMvMVlnbEEwa2dnaXlHellta29pVFdlT3ZieXRYTlZOa1JpL245eTlDNEd1RUlMR04rUjhrVDBiT2czUUx1eHRsTzdqdCtCTU5iZy9ORWs4d1FNeUNaejhuYUt6L3l6TUtzSlZHR3R1K25QYUpXNEFnbTRUNzY2c2k1dmdLRTc5bzZvL0krYmhtZlorNFI0VGh4d3RBZkpOS2d1Y08yN1pyTFVlU0JrcnoyL1R1Qmo3a0pPNVdMMW5CUklrWFNFckVxcmFOTEZxd0FuVStLWVlrb2JpdVZIRDBoOGxoeldicy9lMnFvVjBNajIvVWMxMGdSSnVVd0tqYkEzK2ROVnl1YVRheHZENTRaa1BrclNYSjhMbVNqYzh2R1B0TVJZYUN4VzJlYm1QTU9xSGdoZG1nd3Q1Vm1kbGRFWVh2a2ZMMzI3L3MyckY5U0U3TWNpMEFlL0FKblpRNXJONmdHM2NWMWZxZzZWQm1oYStteWJLUFBXSWQvM3lPRHhLTnhRa3NkcFIzUUkrcWdoQlR3T2xrVXJJanQ1T0pPV1RlSGFUZWJIdERVWE9PdWJSUkhZaDd0cTQ2MUFjR1R6TDhMTWlpbVhDenFVaXVuOUs4b1czTE4zME8xWHF5VElhUmZ0STdRMkw4Ung3UDRNQ2pJNFQzVnlDL3phd0IrdnlpaFBKSVpWY1U0S1RxUm0zOUFIQ2hkazRjVXY5V0lKUU5KSUlJc2hzMkpwS0lrMW5qcjI1VG92WFNHelorTVdscGU1YTB6bmdCamZrZkpFOUd6b04wQzdzYlpUdTQ3ZmdURFc0UHpSSlBNRURNZ21jL0oyTWtqQTdtTERVWjcwRUcvVHdXcDdCQUlKdUUrK3VySXViNENoTy9hT3FQeVBtNFpuMmZ1RWVFNGNjTFFIeVRTb3VhWFhNTS9PMXVQV2VDc0JKazJDQU81Q1R1Vmk5WndVU0pGMGhLeEtxMmpTeGFzQUoxUGltR0pLRzRybFJ3OUlUM0NYcElmM3lkVFlrMkpLMnlyc0RCUFZzK2xuZzdocUNtZU1pRkZIMGVBYncrZUdaRDVLMGx5ZkM1a28zUEx4ajdURVdHZ3NWdG5tNWp6RHFoNElYVzM5Ym4xZmdKWVFIMTdtWkxoY3psck5xeGZVaE96SEl0QUh2d0NaMlVPYXplb0J0M0ZkWDZvT2xRWm9XdnBzbTloSWlKTUZIRzNOaW1DOWVMZFNHRDEwQ1Bxb0lRVThEcFpGS3lJN2VUaVRsazNoMmszbXg3UTFGempybTBVUjJQYzl3bGxIQTNiQk5HWThNL3pjVytNNmxJcnAvU3ZLRnR5emQ5RHRWNnNreUdrWDdTTzBOaS9FY2V6K0RBb3lPTFhIRWhaWTEzNDBaUWluek9veXprdE9DazZrWnQvUUJ3b1haT0hGTC9WaUNVRFNTQ0NMSWJOaWFTaUpOWjQ2OXZQL2N0akE4UGlzRFVmNXB2VVB3eGNZMzVIeVJQUnM2RGRBdTdHMlU3dU8zNEV3MXVEODBTVHpCQXpJSm5QeWRzZlRJNDl6UUVUMzhDV1pJdFBXVWlZQ0NiaFB2cnF5TG0rQW9UdjJqcWo4ajV1R1o5bjdoSGhPSEhDMEI4azBxR1VqeDJsVTlVaVhDb2s1WVFHRW52L3VRazdsWXZXY0ZFaVJkSVNzU3F0bzBzV3JBQ2RUNHBoaVNodUs1VWNQU0c2ek55RmMwcE96YngxOU5BTjU1OXdCaUE5YTkvZDR6NWpoT2hqS2ZqUG1HOFBuaG1RK1N0SmNud3VaS056eThZKzB4RmhvTEZiWjV1WTh3Nm9lQ0Yxc0xvcWEwNkNIeElVMXl3c1NCd1p1emFzWDFJVHN4eUxRQjc4QW1kbERtczNxQWJkeFhWK3FEcFVHYUZyNmJKc3JDZTVyd29iRkV4QjErLzljZXNkYWRBajZxQ0VGUEE2V1JTc2lPM2s0azVaTjRkcE41c2UwTlJjNDY1dEZFZGdkM1k2NkVVb2VzZUNsTXhaM2FxaWRPcFNLNmYwcnloYmNzM2ZRN1ZlckpNaHBGKzBqdERZdnhISHMvZ3dLTWppTlFJdUVwSDRhRWVnVVpkU25XczBqVGdwT3BHYmYwQWNLRjJUaHhTLzFZZ2xBMGtnZ2l5R3pZbWtvaVRXZU92WXp3K1krTXZLOVBSRkZRTXVKbnlpNUdOK1I4a1QwYk9nM1FMdXh0bE83anQrQk1OYmcvTkVrOHdRTXlDWno4blkrVlR6eTU2NFhqdFQyL1VTNE9OVDdBZ200VDc2NnNpNXZnS0U3OW82by9JK2JobWZaKzRSNFRoeHd0QWZKTktoUXdDMnBabHBjMHhHaFlEVWVMcUFGN2tKTzVXTDFuQlJJa1hTRXJFcXJhTkxGcXdBblUrS1lZa29iaXVWSEQwaXZmS2dzVSt3SDB4MmVTMURyUzFDVHFPUkZsYVBpZkkzbW9laXA3WWN1R3h2RDU0WmtQa3JTWEo4TG1TamM4dkdQdE1SWWFDeFcyZWJtUE1PcUhnaGRuTFphS0g2Yms2Vlp2Z3RpcStnSG9NMnJGOVNFN01jaTBBZS9BSm5aUTVyTjZnRzNjVjFmcWc2VkJtaGErbXliTkIzamh1c1g3M1Izb1NQV3gxN1FUM1FJK3FnaEJUd09sa1VySWp0NU9KT1dUZUhhVGViSHREVVhPT3ViUlJIWWQzclVmNG5LaHE4K3paQkVva1d3OVRxVWl1bjlLOG9XM0xOMzBPMVhxeVRJYVJmdEk3UTJMOFJ4N1A0TUNqSTRFS3hvcmE0NXJ6eWpwci9COXBuWVhrNEtUcVJtMzlBSENoZGs0Y1V2OVdJSlFOSklJSXNoczJKcEtJazFuanIyR3cwYS9jUzRLd1o5UkxpWEdjQStleGpma2ZKRTlHem9OMEM3c2JaVHU0N2ZnVERXNFB6UkpQTUVETWdtYy9KMlFIcDRPTGJRMS9DL2JncVk1R1ZHb0FJSnVFKyt1ckl1YjRDaE8vYU9xUHlQbTRabjJmdUVlRTRjY0xRSHlUU294ZFIyK2w4akc2V1B1Vmx0Rnl2Y0UrNUNUdVZpOVp3VVNKRjBoS3hLcTJqU3hhc0FKMVBpbUdKS0c0cmxSdzlJeEZBR2JCaEV2dWQ3cWFnS0RMVnBqUFVPb0I4Zkh0OXBnbXZkdVBUVVRWQWJ3K2VHWkQ1SzBseWZDNWtvM1BMeGo3VEVXR2dzVnRubTVqekRxaDRJWGFVSStjdkdISnpVdE45K3RYZExaeHJOcXhmVWhPekhJdEFIdndDWjJVT2F6ZW9CdDNGZFg2b09sUVpvV3Zwc213dVhYNlhHRUJDcDRKK0pQbFloQlJSMENQcW9JUVU4RHBaRkt5STdlVGlUbGszaDJrM214N1ExRnpqcm0wVVIySlFHV2o5NmJaaVljbDQ5emFFR0htdzZsSXJwL1N2S0Z0eXpkOUR0VjZza3lHa1g3U08wTmkvRWNleitEQW95T0dQOXlONVRQMEtIZmEzVEVTUkE2b2xPQ2s2a1p0L1FCd29YWk9IRkwvVmlDVURTU0NDTEliTmlhU2lKTlo0NjlsQXh2bEczSmZaYnl4YlpBcUJlMW5BWTM1SHlSUFJzNkRkQXU3RzJVN3VPMzRFdzF1RDgwU1R6QkF6SUpuUHlka0Q5Qyt4UXVhdUdTWG9IUndCRkl4OENDYmhQdnJxeUxtK0FvVHYyanFqOGo1dUdaOW43aEhoT0hIQzBCOGswcUxBd1J0aEhwaUtSaUhITXdpelQ5L2Z1UWs3bFl2V2NGRWlSZElTc1NxdG8wc1dyQUNkVDRwaGlTaHVLNVVjUFNJV21JUmtrQWVJdHREbTBYVWx6MU9KdUFldGRSMzUxc0VNRVVydFl1NkN1RzhQbmhtUStTdEpjbnd1WktOenk4WSsweEZob0xGYlo1dVk4dzZvZUNGM0RMZDYyMEJId2orejRtVTJnaDRETXphc1gxSVRzeHlMUUI3OEFtZGxEbXMzcUFiZHhYVitxRHBVR2FGcjZiSnUza0pvemdzcW9IQ3NKUWpUOEF6TmpkQWo2cUNFRlBBNldSU3NpTzNrNGs1Wk40ZHBONXNlME5SYzQ2NXRGRWRoS05XcEJ6bnQvZ0Q0MUthQmVzS0tHT3BTSzZmMHJ5aGJjczNmUTdWZXJKTWhwRiswanREWXZ4SEhzL2d3S01qaWF3czdYSStzZzYvTzhtT01DV3FIQ1RncE9wR2JmMEFjS0YyVGh4Uy8xWWdsQTBrZ2dpeUd6WW1rb2lUV2VPdllSUkpnbXYwcjRkWGV1K1U0amM5S1pHTitSOGtUMGJPZzNRTHV4dGxPN2p0K0JNTmJnL05Fazh3UU15Q1p6OG5aT3JkZVRKb0JGOGFnQ091b1JSUDVnQWdtNFQ3NjZzaTV2Z0tFNzlvNm8vSStiaG1mWis0UjRUaHh3dEFmSk5LanZKc2NHL2dYQUtqZ3k5VzVwSEJJczdrSk81V0wxbkJSSWtYU0VyRXFyYU5MRnF3QW5VK0tZWWtvYml1VkhEMGdUK3ZQY0dIbmc0SzlRSzFlTW5Nek9vK2VsSVV3UnpxWmp4STd4amtaMStodkQ1NFprUGtyU1hKOExtU2pjOHZHREVFc3ArZGVhbXFFbXFJbWp2NGNpNXR1TmUvRTQ2aW5HeUtMRlVURUlIYzJyRjlTRTdNY2kwQWUvQUpuWlE1ck42Z0czY1YxZnFnNlZCbWhhK215YjU1ZlhYTkpmaHBML0tPZTh2bGh2Q0hRSStxZ2hCVHdPbGtVcklqdDVPSk9XVGVIYVRlYkh0RFVYT091YlJSSFlKSEs4ZDZiZ0xDVSthWVdpeFBUQUlUcVVpdW45SzhvVzNMTjMwTzFYcXlUSWFSZnRJN1EyTDhSeDdQNE1Dakk0YlF6cCs0dW1vc2pkUWxOQXdHeDBWVTRLVHFSbTM5QUhDaGRrNGNVdjlXSUpRTkpJSUlzaHMySnBLSWsxbmpyMmpXRzdjM1l5WkowZ0tBOUo5VDhvZFJqZmtmSkU5R3pvTjBDN3NiWlR1NDdmZ1REVzRQelJKUE1FRE1nbWMvSjIxaVRMZlNqTlY2WG8yaEc2Y2FTRStRSUp1RSsrdXJJdWI0Q2hPL2FPcVB5UG00Wm4yZnVFZUU0Y2NMUUh5VFNvVDBIZlpuOXpHVEl6dDRUNnQ4cENUdTVDVHVWaTlad1VTSkYwaEt4S3EyalN4YXNBSjFQaW1HSktHNHJsUnc5SW1kMzJHcTNxNi9JODZsNzdLWm5PT0xYODlxcjNLT1crRXNSNlBZQ3BrbG9idytlR1pENUswbHlmQzVrbzNQTHhneEJMS2ZuWG1wcWhKcWlKbzcrSElpSjhtU3Bxc2NqK2poS0NGKzJWUEZ6TnF4ZlVoT3pISXRBSHZ3Q1oyVU9hemVvQnQzRmRYNm9PbFFab1d2cHNtNmZ2SXJGYlg4dEVmR1lqZUNKc0hxUjBDUHFvSVFVOERwWkZLeUk3ZVRpVGxrM2gyazNteDdRMUZ6anJtMFVSMkpJTy9KeFRRZ3ErZzVoQ1gweC93NU02bElycC9TdktGdHl6ZDlEdFY2c2t5R2tYN1NPME5pL0VjZXorREFveU9EcHpFcjQ3UVJ1bStmMy90WHV5anhWT0NrNmtadC9RQndvWFpPSEZML1ZpQ1VEU1NDQ0xJYk5pYVNpSk5aNDY5a2xGL3hhYVZSNXdxWUY3TG5pTGFrb1kzNUh5UlBSczZEZEF1N0cyVTd1TzM0RXcxdUQ4MFNUekJBeklKblB5ZHRlNUt0djE4SldBZVhRQ3BLZVlMSlVDQ2JoUHZycXlMbStBb1R2MmpxajhqNXVHWjluN2hIaE9ISEMwQjhrMHFMZ2xobThzbzkxeUM2bkVocEZ0V1dEdVFrN2xZdldjRkVpUmRJU3NTcXRvMHNXckFDZFQ0cGhpU2h1SzVVY1BTRGxzU085bWo2YUlOU1VBTEFOSmxzQ281RVdWbytKOGplYWg2S250aHk0Ykc4UG5obVErU3RKY253dVpLTnp5OFJRZlNCenM4UU5zRXZwN3FTTitKUFFzU2tRY1djRGlkbGVHMmxJOXRrbXl6YXNYMUlUc3h5TFFCNzhBbWRsRG1nTlZPQlpsQW1zMmRXWUUwVkU0dFczODhVZ0ZJTElNM2RWUVBUcTRDUzJWZEFqNnFDRUZQQTZXUlNzaU8zazRrNVpONGRwTjVzZTBOUmM0NjV0RkVkaktldXowWXR4K3REQlQyK3RTOGh2WE9wU0s2ZjByeWhiY3MzZlE3VmVySk1ocEYrMGp0RFl2eEhIcy9nd0tNamhkSnh0RGNmUG5TMzNrakN4cm5BeFNUZ3BPcEdiZjBBY0tGMlRoeFMvMVlnbEEwa2dnaXlHellta29pVFdlT3ZhTHNVQU5KQU5nRjRpenkxWTQveFVqR04rUjhrVDBiT2czUUx1eHRsTzdqdCtCTU5iZy9ORWs4d1FNeUNaejhuWllWelExck5Kd1dCQTlwZnI1TmtlaUFnbTRUNzY2c2k1dmdLRTc5bzZvL0krYmhtZlorNFI0VGh4d3RBZkpOS2htblB5R1B3QWo2cXFYM0RqNUtxZzk3a0pPNVdMMW5CUklrWFNFckVxcmFJbmNiYjdJSjNXNlVVWTgyUGJzVE13MFJ2Tm9ybENEaGo0N0ZzR0cvdkdzMXlRaVQzWC9BcFpzNTlGVE4vR0pvQT09";
+        System.out.println("密钥："+key+", 解密后的明文是："+decrypt(Base64Util.decode(encodeContent), key));
+    }
+}

@@ -1,0 +1,350 @@
+@charset "utf-8";
+/* 你自己的样式 */
+.hui-btn {
+    display: inline-block;
+    min-width: 50px;
+    min-height: 30px;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 400;
+    white-space: nowrap;
+    vertical-align: middle;
+    -moz-padding-start: npx;
+    -moz-padding-end: npx;
+    border: solid 1px #ddd;
+    background-color: #fff;
+    width: auto;
+    *zoom: 1;
+    *overflow: visible;
+    transition: background-color 0.1s linear;
+    /*默认——灰色  通常用于取消*/
+    /*主要——主色  通常用于确定、提交、购买、支付等*/
+    /*次要按钮*/
+    /*成功*/
+    /*警告*/
+    /*危险*/
+    /*链接*/
+    /*块级按钮*/
+    /* Outline buttons */
+    /*禁用状态*/
+}
+.hui-btn:active, .hui-btn.active {
+    background-color: #ccc;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.125) inset;
+}
+.hui-btn:first-child {
+    *margin-left: 0;
+}
+.hui-btn.hui-btn-default {
+    background-color: #e6e6e6;
+    border-color: #e6e6e6;
+}
+.hui-btn.hui-btn-default:hover, .hui-btn.hui-btn-default:focus, .hui-btn.hui-btn-default:active, .hui-btn.hui-btn-default.active {
+    color: #333;
+    background-color: #c7c7c7;
+    border-color: #c7c7c7;
+}
+.hui-btn.hui-btn-primary {
+    color: #fff;
+    background-color: #5a98de;
+    border-color: #5a98de;
+}
+.hui-btn.hui-btn-primary:hover, .hui-btn.hui-btn-primary:focus, .hui-btn.hui-btn-primary:active, .hui-btn.hui-btn-primary.active {
+    color: #fff;
+    background-color: #0a6999;
+    border-color: #0a6999;
+}
+.hui-btn.hui-btn-secondary {
+    color: #fff;
+    background-color: #3bb4f2;
+    border-color: #3bb4f2;
+}
+.hui-btn.hui-btn-secondary:hover, .hui-btn.hui-btn-secondary:focus, .hui-btn.hui-btn-secondary:active, .hui-btn.hui-btn-secondary.active {
+    color: #fff;
+    background-color: #0f9ae0;
+    border-color: #0f9ae0;
+}
+.hui-btn.hui-btn-success {
+    color: #fff;
+    background-color: #5eb95e;
+    border-color: #5eb95e;
+}
+.hui-btn.hui-btn-success:hover, .hui-btn.hui-btn-success:focus, .hui-btn.hui-btn-success:active, .hui-btn.hui-btn-success.active {
+    color: #fff;
+    background-color: #429842;
+    border-color: #429842;
+}
+.hui-btn.hui-btn-warning {
+    color: #fff;
+    background-color: #f37b1d;
+    border-color: #f37b1d;
+}
+.hui-btn.hui-btn-warning:hover, .hui-btn.hui-btn-warning:focus, .hui-btn.hui-btn-warning:active, .hui-btn.hui-btn-warning.active {
+    color: #fff;
+    background-color: #c85e0b;
+    border-color: #c85e0b;
+}
+.hui-btn.hui-btn-danger {
+    color: #fff;
+    background-color: #dd514c;
+    border-color: #dd514c;
+}
+.hui-btn.hui-btn-danger:hover, .hui-btn.hui-btn-danger:focus, .hui-btn.hui-btn-danger:active, .hui-btn.hui-btn-danger.active {
+    color: #fff;
+    background-color: #c62b26;
+    border-color: #c62b26;
+}
+.hui-btn.hui-btn-link {
+    color: #0e90d2;
+    cursor: pointer;
+    border-color: transparent;
+    background-color: transparent;
+}
+.hui-btn.hui-btn-link:hover, .hui-btn.hui-btn-link:focus, .hui-btn.hui-btn-link:active, .hui-btn.hui-btn-link.active {
+    color: #095f8a;
+    text-decoration: underline;
+    background-color: transparent;
+}
+.hui-btn.hui-btn-dashed {
+    border-style: dashed;
+}
+.hui-btn.hui-btn-block {
+    box-sizing: border-box;
+    display: block;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+}
+.hui-btn.hui-btn-default-outline {
+    background-color: transparent;
+    border-color: #e6e6e6;
+}
+.hui-btn.hui-btn-default-outline:hover, .hui-btn.hui-btn-default-outline:focus, .hui-btn.hui-btn-default-outline:active, .hui-btn.hui-btn-default-outline.active, .hui-btn.hui-btn-default-outline.focus {
+    color: #333;
+    background-color: transparent;
+    border-color: #c7c7c7;
+}
+.hui-btn.hui-btn-primary-outline {
+    color: #5a98de;
+    background-color: transparent;
+    border-color: #5a98de;
+}
+.hui-btn.hui-btn-primary-outline:hover, .hui-btn.hui-btn-primary-outline:focus, .hui-btn.hui-btn-primary-outline:active, .hui-btn.hui-btn-primary-outline.active, .hui-btn.hui-btn-primary-outline.focus {
+    color: #0a6999;
+    background-color: transparent;
+    border-color: #0a6999;
+}
+.hui-btn.hui-btn-secondary-outline {
+    color: #3bb4f2;
+    background-color: transparent;
+    background-image: none;
+    border-color: #3bb4f2;
+}
+.hui-btn.hui-btn-secondary-outline:hover, .hui-btn.hui-btn-secondary-outline.focus, .hui-btn.hui-btn-secondary-outline:active, .hui-btn.hui-btn-secondary-outline:focus {
+    color: #fff;
+    background-color: #3bb4f2;
+    border-color: #3bb4f2;
+}
+.hui-btn.hui-btn-success-outline {
+    color: #5eb95e;
+    background-color: transparent;
+    background-image: none;
+    border-color: #5eb95e;
+}
+.hui-btn.hui-btn-success-outline:hover, .hui-btn.hui-btn-success-outline:focus, .hui-btn.hui-btn-success-outline:active, .hui-btn.hui-btn-success-outline.active, .hui-btn.hui-btn-success-outline.focus {
+    color: #fff;
+    background-color: #5eb95e;
+    border-color: #5eb95e;
+}
+.hui-btn.hui-btn-warning-outline {
+    color: #f37b1d;
+    background-color: transparent;
+    background-image: none;
+    border-color: #f37b1d;
+}
+.hui-btn.hui-btn-warning-outline:hover, .hui-btn.hui-btn-warning-outline:focus, .hui-btn.hui-btn-warning-outline:active, .hui-btn.hui-btn-warning-outline.active, .hui-btn.hui-btn-warning-outline.focus {
+    color: #fff;
+    background-color: #f37b1d;
+    border-color: #f37b1d;
+}
+.hui-btn.hui-btn-danger-outline {
+    color: #dd514c;
+    background-color: transparent;
+    background-image: none;
+    border-color: #dd514c;
+}
+.hui-btn.hui-btn-danger-outline:hover, .hui-btn.hui-btn-danger-outline:focus, .hui-btn.hui-btn-danger-outline:active, .hui-btn.hui-btn-danger-outline.active, .hui-btn.hui-btn-danger-outline.focus {
+    color: #fff;
+    background-color: #dd514c;
+    border-color: #dd514c;
+}
+.hui-btn.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    background-image: none;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    box-shadow: none;
+}
+.hui-btn.hui-btn-loading {
+    position: relative;
+}
+
+a.hui-btn:hover,
+a.hui-btn:focus,
+a.hui-btn:active,
+a.hui-btn.active,
+a.hui-btn.disabled,
+a.hui-btn[disabled] {
+    text-decoration: none;
+}
+
+.open > .hui-btn-primary-outline.hui-dropdown-toggle {
+    color: #0a6999;
+    background-color: transparent;
+    border-color: #0a6999;
+}
+
+.open > .hui-btn-secondary-outline.hui-dropdown-toggle {
+    color: #fff;
+    background-color: #3bb4f2;
+    border-color: #3bb4f2;
+}
+
+.open > .hui-btn-success-outline.hui-dropdown-toggle {
+    color: #fff;
+    background-color: #5eb95e;
+    border-color: #5eb95e;
+}
+
+.open > .hui-btn-warning-outline.hui-dropdown-toggle {
+    color: #fff;
+    background-color: #f37b1d;
+    border-color: #f37b1d;
+}
+
+.open > .hui-btn-danger-outline.hui-dropdown-toggle {
+    color: #fff;
+    background-color: #dd514c;
+    border-color: #dd514c;
+}
+
+/*表单组*/
+.hui-form-group {
+    display: inline-block;
+    vertical-align: middle;
+}
+.hui-form-group .hui-input-text {
+    position: relative;
+    vertical-align: top;
+}
+.hui-form-group .hui-btn {
+    position: relative;
+    margin-left: -1px;
+}
+.hui-form-group.radius {
+    overflow: hidden;
+}
+.hui-form-group.radius .hui-input-text {
+    border-radius: 4px 0 0 4px;
+}
+.hui-form-group.radius .hui-btn {
+    border-radius: 0 4px 4px 0;
+}
+.hui-form-group.round {
+    overflow: hidden;
+}
+.hui-form-group.round .hui-input-text {
+    border-radius: 1000px 0 0 1000px;
+}
+.hui-form-group.round .hui-btn {
+    border-radius: 0 1000px 1000px 0;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* ==================================================================== */
+/* CHECKBOX TYPE 10 ---------------------------------------------------- */
+/* ==================================================================== */
+
+
+[id^="checkbox-item-"] + label {
+    background-color: #fafbfa;
+    padding: 9px;
+    border-radius: 50px;
+    display: inline-block;
+    position: relative;
+    margin-right: 30px;
+    -webkit-transition: all 0.1s ease-in;
+    transition: all 0.1s ease-in;
+    width: 32px;
+    height: 6px;
+}
+
+[id^="checkbox-item-"] + label:after {
+    content: ' ';
+    position: absolute;
+    top: 0;
+    -webkit-transition: box-shadow 0.1s ease-in;
+    transition: box-shadow 0.1s ease-in;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 100px;
+    box-shadow: inset 0 0 0 0 #eee, 0 0 1px rgba(0,0,0,0.4);
+}
+
+[id^="checkbox-item-"] + label:before {
+    content: ' ';
+    position: absolute;
+    background: white;
+    top: 1px;
+    left: 1px;
+    z-index: 999999;
+    width: 22px;
+    -webkit-transition: all 0.1s ease-in;
+    transition: all 0.1s ease-in;
+    height: 22px;
+    border-radius: 100px;
+    box-shadow: 0 3px 1px rgba(0,0,0,0.05), 0 0px 1px rgba(0,0,0,0.3);
+}
+
+[id^="checkbox-item-"]:active + label:after {
+    box-shadow: inset 0 0 0 20px #eee, 0 0 1px #eee;
+}
+
+[id^="checkbox-item-"]:active + label:before {
+    width: 37px;
+}
+
+[id^="checkbox-item-"]:checked:active + label:before {
+    width: 37px;
+    left: 20px;
+}
+
+[id^="checkbox-item-"] + label:active {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+[id^="checkbox-item-"]:checked + label:before {
+    content: ' ';
+    position: absolute;
+    left: 26px;
+    border-radius: 100px;
+}
+
+[id^="checkbox-item-"]:checked + label:after {
+    content: ' ';
+    font-size: 1.5em;
+    position: absolute;
+    background: #4cda60;
+    box-shadow: 0 0 1px #4cda60;
+}

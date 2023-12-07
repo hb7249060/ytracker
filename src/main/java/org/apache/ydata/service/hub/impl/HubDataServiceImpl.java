@@ -94,10 +94,13 @@ public class HubDataServiceImpl implements HubDataService {
             hubData.setOrderTotalFee(jsonDataObject.getDouble("orderTotalFee"));
             hubData.setOrderPayFee(jsonDataObject.getDouble("orderPayFee"));
             hubData.setOrderSuccessRate(jsonDataObject.getDouble("orderSuccessRate"));
-            if(hubInfo.getRate() != null)
+            if(hubInfo.getRate() != null) {
                 hubData.setBenfit(new BigDecimal(hubData.getOrderPayFee().doubleValue())
                         .multiply(new BigDecimal(hubInfo.getRate().doubleValue()))
                         .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            }
+
+            hubData.setSysBalance(jsonDataObject.getDouble("sysBalance"));
             mapper.insert(hubData);
         } else {
             //update
@@ -107,10 +110,14 @@ public class HubDataServiceImpl implements HubDataService {
             hubData.setOrderTotalFee(jsonDataObject.getDouble("orderTotalFee"));
             hubData.setOrderPayFee(jsonDataObject.getDouble("orderPayFee"));
             hubData.setOrderSuccessRate(jsonDataObject.getDouble("orderSuccessRate"));
-            if(hubInfo.getRate() != null)
+            if(hubInfo.getRate() != null) {
                 hubData.setBenfit(new BigDecimal(hubData.getOrderPayFee().doubleValue())
                         .multiply(new BigDecimal(hubInfo.getRate().doubleValue()))
                         .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            }
+            if(jsonDataObject.containsKey("sysBalance")) {
+                hubData.setSysBalance(jsonDataObject.getDouble("sysBalance"));
+            }
             mapper.updateByPrimaryKeySelective(hubData);
         }
         return hubData;

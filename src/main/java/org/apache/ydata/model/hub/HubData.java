@@ -46,6 +46,9 @@ public class HubData implements Serializable {
     @Column(columnDefinition = "DECIMAL(10,2) COMMENT '收益'")
     Double benfit;
 
+    @Column(columnDefinition = "DECIMAL(10,2) COMMENT '系统余额'")
+    Double sysBalance;
+
     @Column(columnDefinition = "BIGINT COMMENT '创建时间'")
     Long created;
 

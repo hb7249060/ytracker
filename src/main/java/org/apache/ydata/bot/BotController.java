@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ydata.utils.ResultGenerator;
 import org.apache.ydata.utils.Tools;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
@@ -21,6 +22,11 @@ import java.util.List;
 @RequestMapping(value = "/bot")
 public class BotController {
 
+    @Value("${config.telegram.notifyBot.username}")
+    private String notifyBotUsername;
+    @Value("${config.telegram.notifyBot.token}")
+    private String notifyBotToken;
+
     @PostMapping(value = "/sendMsg")
     public Object sendMsg(String type,
                           String chatId,
@@ -28,7 +34,7 @@ public class BotController {
         DefaultAbsSender defaultAbsSender = new DefaultAbsSender(new DefaultBotOptions()) {
             @Override
             public String getBotToken() {
-                return Constants.token;
+                return notifyBotToken;
             }
         };
         switch (type) {
@@ -57,7 +63,7 @@ public class BotController {
                 msgText.append("订单号：" + order.getOrderNo());
 
                 msgText.append("\n");
-                msgText.append("金额：<b>" + new BigDecimal(order.getFee()).setScale(2, BigDecimal.ROUND_UP).toString() + "</b>");
+                msgText.append("金额：<b>" + (order.getFee() == null ? 0 : new BigDecimal(order.getFee()).setScale(2, BigDecimal.ROUND_UP).toString()) + "</b>");
 
                 msgText.append("\n");
                 msgText.append("收款码别名：" + order.getPayCodeAlias());
@@ -73,7 +79,7 @@ public class BotController {
 
                 try {
                     msgText.append("\n");
-                    msgText.append("订单生成时间：" + Tools.timeDateString(order.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+                    msgText.append("订单生成时间：" + (order.getCreateTime() == null ? 0 : Tools.timeDateString(order.getCreateTime(), "yyyy-MM-dd HH:mm:ss")));
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -122,7 +128,7 @@ public class BotController {
         DefaultAbsSender defaultAbsSender = new DefaultAbsSender(new DefaultBotOptions()) {
             @Override
             public String getBotToken() {
-                return Constants.token;
+                return notifyBotToken;
             }
         };
         try {

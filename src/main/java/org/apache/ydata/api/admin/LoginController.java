@@ -111,21 +111,21 @@ public class LoginController {
             return "redirect:/admin/bindingGoogleTwoFactorValidate";
         }
 
-        if(prod) {
-            //校验google code
-            String rightGoogleCode = GoogleAuthenticationTool.getTOTPCode(admin.getTwoFactorCode());
-            if (ObjectUtils.isEmpty(vo.getGoogleCode())) {
-                request.setAttribute("errMsg", "请输入谷歌验证码");
-                redirectAttributes.addAttribute("errMsg", "请输入谷歌验证码");
-                return "redirect:" + Constants.ERROR;
-            }
-            if (!vo.getGoogleCode().equals(rightGoogleCode)) {
-                writeLoginLog("登录失败，谷歌验证码不正确或已超时", "用户名：" + vo.getUsername());
-                request.setAttribute("errMsg", "谷歌验证码不正确或已超时");
-                redirectAttributes.addAttribute("errMsg", "谷歌验证码不正确或已超时");
-                return "redirect:" + Constants.ERROR;
-            }
-        }
+//        if(prod) {
+//            //校验google code
+//            String rightGoogleCode = GoogleAuthenticationTool.getTOTPCode(admin.getTwoFactorCode());
+//            if (ObjectUtils.isEmpty(vo.getGoogleCode())) {
+//                request.setAttribute("errMsg", "请输入谷歌验证码");
+//                redirectAttributes.addAttribute("errMsg", "请输入谷歌验证码");
+//                return "redirect:" + Constants.ERROR;
+//            }
+//            if (!vo.getGoogleCode().equals(rightGoogleCode)) {
+//                writeLoginLog("登录失败，谷歌验证码不正确或已超时", "用户名：" + vo.getUsername());
+//                request.setAttribute("errMsg", "谷歌验证码不正确或已超时");
+//                redirectAttributes.addAttribute("errMsg", "谷歌验证码不正确或已超时");
+//                return "redirect:" + Constants.ERROR;
+//            }
+//        }
         //写log
         if(admin.getCreated() != null) {
             writeLoginLog("超管登录成功", "用户名：" + vo.getUsername());

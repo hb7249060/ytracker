@@ -29,6 +29,12 @@
 					<li>
 						<a data-href="<c:url value='/admin/business/stat/list.html' /> " data-title="三方数据统计" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 三方数据统计</a>
 					</li>
+					<li>
+						<a data-href="<c:url value='/admin/business/hubgroup/list.html' /> " data-title="三方群组配置" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 三方群组配置</a>
+					</li>
+					<li>
+						<a data-href="<c:url value='/admin/business/botaccount/list.html' /> " data-title="机器人信息库" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 机器人信息库</a>
+					</li>
 				</ul>
 			</dd>
 		</dl>
@@ -46,6 +52,9 @@
 					</li>
 					<li <c:if test="${fn:contains(requestURL, '/admin/system/logs.html')}" > class="current" </c:if>>
 						<a data-href="<c:url value='/admin/system/logs.html' /> " data-title="系统日志" href="javascript:void(0)"><i class="Hui-iconfont">&#xe623;</i> 系统日志</a>
+					</li>
+					<li <c:if test="${fn:contains(requestURL, '/index-pay.html')}" > class="current" </c:if>>
+						<a data-href="<c:url value='/index-pay.html' /> " data-title="下单测试" href="javascript:void(0)"><i class="Hui-iconfont">&#xe623;</i> 下单测试</a>
 					</li>
 				</ul>
 			</dd>

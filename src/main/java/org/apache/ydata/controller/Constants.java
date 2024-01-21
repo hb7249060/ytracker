@@ -17,6 +17,11 @@ public interface Constants {
 
     String BUSINESS_STAT_LIST = "/admin/business/stat/list.html";
 
+    String BUSINESS_HUBGROUP_LIST = "/admin/business/hubgroup/list.html";
+    String BUSINESS_HUBGROUP_ADD_OR_UPDATE = "/admin/business/hubgroup/addOrUpdate.html";
+
+    String BUSINESS_BOT_ACCOUNT_LIST = "/admin/business/botaccount/list.html";
+
     //三方支付通道配置
     String CONFIG_HUB_PAY_CHANNEL_LIST = "/admin/config/hubpaychannel/list.html";
     String CONFIG_HUB_PAY_CHANNEL_ADD_OR_UPDATE = "/admin/config/hubpaychannel/addOrUpdate.html";
@@ -39,10 +44,6 @@ public interface Constants {
     String HUB_PROFIT_RECORD_LIST = "/admin/business/hubprofitrecord/list.html";
 
     //四方收益流水记录
-    String MCH_PROFIT_RECORD_LIST = "/admin/business/mchprofitrecord/list.html";
-
-    String PAY_ORDERINFO_LIST = "/admin/business/payorderinfo/list.html";
-    String PAY_ORDERINFO_UPDATE = "/admin/business/payorderinfo/update.html";
     String STAT_STAT = "/admin/systemstat/stat.html";
     String PAYORDER_STAT = "/admin/systemstat/payorder/stat.html";
 
@@ -57,10 +58,6 @@ public interface Constants {
     String SYS_PAY_CHANNEL_LIST = "/admin/system/paychannel/list.html";
     String SYS_PAY_CHANNEL_ADD_OR_UPDATE = "/admin/system/paychannel/addOrUpdate.html";
 
-    //风控
-    String RISK_ORDER_PROFIT_LIST = "/admin/systemrisk/orderprofit/list.html";
-    String RISK_ORDER_PROFIT_VIEW = "/admin/systemrisk/orderprofit/view.html";
-
     //系统费充值
     String SYS_RECHARGE_RECORD_LIST = "/admin/system/rechargerecord/list.html";
     String SYS_RECHARGE_RECORD_ADD_OR_UPDATE = "/admin/system/rechargerecord/addOrUpdate.html";
@@ -69,6 +66,7 @@ public interface Constants {
     String MCH_POINTS_LIST = "/admin/business/merchantpoints/list.html";
     String MCH_POINTS_ADD_OR_VIEW = "/admin/business/merchantpoints/addOrView.html";
 
-    //商户代付订单下单记录
-    String PAY_ORDER_RECORD_LIST = "/admin/business/payorderrecord/list.html";
+
+    //下单测试
+    String INDEX_PAY = "/index-pay.html";
 }

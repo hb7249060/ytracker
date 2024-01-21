@@ -31,16 +31,6 @@ public class BotStater {
 
     @Value("${config.telegram.userBot.enable}")
     private boolean userBotEnable;
-    @Value("${config.telegram.userBot.api_id}")
-    private String userBotApiId;
-    @Value("${config.telegram.userBot.api_hash}")
-    private String userBotApiHash;
-    @Value("${config.telegram.userBot.phone_number}")
-    private String userBotPhoneNumber;
-    @Value("${config.telegram.userBot.user_id}")
-    private String userBotUserId;
-    @Value("${config.telegram.userBot.admin_id}")
-    private String userBotAdminId;
 
     @Resource
     private RedisUtils redisUtils;
@@ -51,18 +41,38 @@ public class BotStater {
     @Resource
     private BotMsgReceiver botMsgReceiver;
 
+    @Resource
+    private MyUserBot myUserBot;
+
+    private MyNotifyBot notifyBot;
+    private MyAlarmBot alarmBot;
+
     @PostConstruct
     public void start() {
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
             if(alarmBotEnable) {
-                telegramBotsApi.registerBot(new MyNotifyBot(botMsgReceiver, botMsgSender, notifyBotUsername, notifyBotToken));
+                MyAlarmBot myAlarmBot = new MyAlarmBot(botMsgReceiver, botMsgSender, alarmBotUsername, alarmBotToken);
+                telegramBotsApi.registerBot(myAlarmBot);
+                alarmBot = myAlarmBot;
             }
             if(notifyBotEnable) {
-                telegramBotsApi.registerBot(new MyAlarmBot(botMsgReceiver, botMsgSender, alarmBotUsername, alarmBotToken));
+                MyNotifyBot myNotifyBot = new MyNotifyBot(botMsgReceiver, botMsgSender, notifyBotUsername, notifyBotToken);
+                telegramBotsApi.registerBot(myNotifyBot);
+                notifyBot = myNotifyBot;
             }
             if(userBotEnable) {
-                
+                 new Thread() {
+                     @Override
+                     public void run() {
+                         super.run();
+                         try {
+                             myUserBot.init(BotStater.this);
+                         } catch (Exception e) {
+                             e.printStackTrace();
+                         }
+                     }
+                 }.start();
             }
             /*  Webhook方式
 			Webhook webhook = new DefaultWebhook();
@@ -79,4 +89,11 @@ public class BotStater {
         }
     }
 
+    public MyNotifyBot getNotifyBot() {
+        return notifyBot;
+    }
+
+    public MyAlarmBot getAlarmBot() {
+        return alarmBot;
+    }
 }

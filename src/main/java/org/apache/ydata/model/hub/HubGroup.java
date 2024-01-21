@@ -15,6 +15,11 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class HubGroup implements Serializable {
 
+    @Transient
+    String hubName;
+    @Transient
+    String groupBotInfo;//组机器人信息
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -22,8 +27,8 @@ public class HubGroup implements Serializable {
     @Column(columnDefinition = "BIGINT COMMENT '三方ID'")
     Long hubId;
 
-    @Column(columnDefinition = "VARCHAR(64) COMMENT 'telegram群组ID'")
-    String telGroupId;
+    @Column(columnDefinition = "BIGINT COMMENT 'telegram群组ID'")
+    Long telChatId;
 
     @Column(columnDefinition = "VARCHAR(64) COMMENT 'telegram群组名称'")
     String telGroupName;

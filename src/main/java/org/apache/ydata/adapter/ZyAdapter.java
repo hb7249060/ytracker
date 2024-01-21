@@ -40,4 +40,13 @@ public class ZyAdapter implements BaseAdapter {
         return result;
     }
 
+    @Override
+    public JSONObject getBindChatId(HubInfo hubInfo, String orderNo) {
+        Map dataMap = Maps.newHashMap();
+        dataMap.put("tradeNo", orderNo); //yyyy-MM-dd格式
+
+        JSONObject result = HttpUtils.post(hubInfo.getApiUrl() + "/getBindChatId", null, dataMap);
+        return result;
+    }
+
 }

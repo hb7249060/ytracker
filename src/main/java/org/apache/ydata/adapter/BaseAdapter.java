@@ -8,5 +8,6 @@ public interface BaseAdapter {
     //查询数据
     JSONObject stat(HubInfo hubInfo, String statDate);
 
-
+    //查询订单绑定的chatid
+    JSONObject getBindChatId(HubInfo hubInfo, String orderNo);
 }

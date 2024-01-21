@@ -22,14 +22,14 @@ public class HubGroupBot implements Serializable {
     @Column(columnDefinition = "BIGINT COMMENT '三方群组ID'")
     Long groupId;
 
-    @Column(columnDefinition = "VARCHAR(64) COMMENT 'telegram群组ID'")
-    String telGroupId;
+    @Column(columnDefinition = "BIGINT COMMENT 'telegram群组ID'")
+    Long telChatId;
 
-    @Column(columnDefinition = "VARCHAR(64) COMMENT 'telegram机器人ID'")
-    String telBotId;
+    @Column(columnDefinition = "BIGINT COMMENT 'telegram机器人ID'")
+    Long telBotId;
 
-    @Column(columnDefinition = "VARCHAR(64) COMMENT 'telegram机器人名称'")
-    String telBotName;
+    @Column(columnDefinition = "VARCHAR(64) COMMENT 'telegram机器人用户名'")
+    String telBotUsername;
 
     @Column(columnDefinition = "TEXT COMMENT '备注'")
     String memo;

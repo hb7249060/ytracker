@@ -33,3 +33,4 @@ build/
 .vscode/
 config/application.yml
 *.log
+teluserbot/

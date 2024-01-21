@@ -99,8 +99,13 @@ public class HubDataServiceImpl implements HubDataService {
                         .multiply(new BigDecimal(hubInfo.getRate().doubleValue()))
                         .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             }
-
-            hubData.setSysBalance(jsonDataObject.getDouble("sysBalance"));
+            if(jsonDataObject.containsKey("userDashboardVo")) {
+                if(jsonDataObject.getJSONObject("userDashboardVo").containsKey("sysProp")) {
+                    if(jsonDataObject.getJSONObject("userDashboardVo").getJSONObject("sysProp").containsKey("sysBalance")) {
+                        hubData.setSysBalance(jsonDataObject.getJSONObject("userDashboardVo").getJSONObject("sysProp").getDouble("sysBalance"));
+                    }
+                }
+            }
             mapper.insert(hubData);
         } else {
             //update
@@ -115,8 +120,12 @@ public class HubDataServiceImpl implements HubDataService {
                         .multiply(new BigDecimal(hubInfo.getRate().doubleValue()))
                         .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             }
-            if(jsonDataObject.containsKey("sysBalance")) {
-                hubData.setSysBalance(jsonDataObject.getDouble("sysBalance"));
+            if(jsonDataObject.containsKey("userDashboardVo")) {
+                if(jsonDataObject.getJSONObject("userDashboardVo").containsKey("sysProp")) {
+                    if(jsonDataObject.getJSONObject("userDashboardVo").getJSONObject("sysProp").containsKey("sysBalance")) {
+                        hubData.setSysBalance(jsonDataObject.getJSONObject("userDashboardVo").getJSONObject("sysProp").getDouble("sysBalance"));
+                    }
+                }
             }
             mapper.updateByPrimaryKeySelective(hubData);
         }

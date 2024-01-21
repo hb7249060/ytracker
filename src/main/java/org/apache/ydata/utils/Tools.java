@@ -166,21 +166,22 @@ public class Tools {
 //        Long id = IdUtil.nextId();
         String username = "admin";
         String salt = getSalt(8);
-        String password = getSalt(10);
+//        String password = getSalt(10);
+        String password = "1";
         String encryptPwd = new Md5Hash(password, salt, 1024).toHex();
         System.out.println(username + ", " + salt + ", " + password + ", " + encryptPwd);
 
-        double money = 1000;
-        Random random = new Random();
-        for(int i = 0;i<30;i++) {
-            int number = random.nextInt(9);
-            if(number == 0) number++;
+//        double money = 1000;
+//        Random random = new Random();
+//        for(int i = 0;i<30;i++) {
+//            int number = random.nextInt(9);
+//            if(number == 0) number++;
 //            System.out.println(number);
-            BigDecimal digit = new BigDecimal(number).divide(new BigDecimal(100));
+//            BigDecimal digit = new BigDecimal(number).divide(new BigDecimal(100));
 //            if(digit == 1) digit = digit - 0.01;
 //            BigDecimal discount = new BigDecimal(digit).setScale(2, BigDecimal.ROUND_UP);
 //            System.out.println(new BigDecimal(money).subtract(digit).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-        }
+//        }
 //        System.out.println(getIMAccid());
 
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

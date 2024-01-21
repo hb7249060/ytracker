@@ -5,9 +5,13 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.File;
 
 /**
  * 通知机器人，用于单人对话
@@ -77,5 +81,17 @@ public class MyNotifyBot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return this.token;
+    }
+
+    public void sendImageText(String localFilepath, String captionText, Long notifyChatId) {
+        SendPhoto sendPhoto = new SendPhoto();
+        sendPhoto.setPhoto(new InputFile(new File(localFilepath)));
+        sendPhoto.setCaption(captionText);
+        sendPhoto.setChatId(notifyChatId);
+        try {
+            execute(sendPhoto);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

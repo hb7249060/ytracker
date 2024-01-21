@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -114,6 +113,20 @@ public class WebController {
         return "systemstat/hubdata/stat";
     }
 
+    @GetMapping(value = Constants.BUSINESS_HUBGROUP_LIST)
+    public Object hubgroupList() {
+        return "config/hubgroup/list";
+    }
+
+    @GetMapping(value = Constants.BUSINESS_HUBGROUP_ADD_OR_UPDATE)
+    public Object hubgroupAddOrUpdate() {
+        return "config/hubgroup/addOrUpdate";
+    }
+    @GetMapping(value = Constants.BUSINESS_BOT_ACCOUNT_LIST)
+    public Object botaccountList() {
+        return "config/botaccount/list";
+    }
+
     @GetMapping(value = Constants.CONFIG_HUB_PAY_CHANNEL_LIST)
     public Object hubpaychannelList() {
         return "config/hubpaychannel/list";
@@ -140,19 +153,6 @@ public class WebController {
     @GetMapping(value = Constants.HUB_PROFIT_RECORD_LIST)
     public Object hubProfitRecordList() {
         return "business/hubprofitrecord/list";
-    }
-    @GetMapping(value = Constants.MCH_PROFIT_RECORD_LIST)
-    public Object mchProfitRecordList() {
-        return "business/mchprofitrecord/list";
-    }
-
-    @GetMapping(value = Constants.PAY_ORDERINFO_LIST)
-    public Object payOrderinfoList() {
-        return "business/payorderinfo/list";
-    }
-    @GetMapping(value = Constants.PAY_ORDERINFO_UPDATE)
-    public Object payOrderinfoView() {
-        return "business/payorderinfo/update";
     }
 
     @GetMapping(value = Constants.STAT_STAT)
@@ -219,15 +219,6 @@ public class WebController {
         return "systemstat/merchant/stat";
     }
 
-    @GetMapping(value = Constants.RISK_ORDER_PROFIT_LIST)
-    public Object riskOrderProfitList() {
-        return "systemrisk/orderprofit/list";
-    }
-    @GetMapping(value = Constants.RISK_ORDER_PROFIT_VIEW)
-    public Object riskOrderProfitView() {
-        return "systemrisk/orderprofit/view";
-    }
-
     @GetMapping(value = Constants.SYS_RECHARGE_RECORD_LIST)
     public Object rechargeRecordList() {
         return "system/rechargerecord/list";
@@ -247,9 +238,9 @@ public class WebController {
         return "business/merchantpoints/addOrView";
     }
 
-    //商户代付订单
-    @GetMapping(value = Constants.PAY_ORDER_RECORD_LIST)
-    public Object payOrderRecordList() {
-        return "business/payorderrecord/list";
+    @GetMapping(value = Constants.INDEX_PAY)
+    public Object indexPay() {
+        return "index-pay";
     }
+
 }

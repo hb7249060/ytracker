@@ -43,6 +43,7 @@
 	<th width="40">成交量</th>
 							<th width="20">收益</th>
 	<th width="20">成功率</th>
+	<th width="20">系统余额</th>
 	<th width="35">更新时间</th>
 						</tr>
 					</thead>
@@ -87,6 +88,10 @@ $(function(){
 			}},
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
 				var html = data.orderSuccessRate;
+				return html;
+			}},
+		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
+				var html = data.sysBalance != null ? data.sysBalance : "";
 				return html;
 			}},
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {

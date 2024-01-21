@@ -182,9 +182,10 @@ public class MyUserBot {
         TdApi.MessageContent messageContent = update.message.content;
         // 分析消息内容，转发至通知机器人，并回复原消息
         if (messageContent instanceof TdApi.MessageText) {
+            if(true) return;//纯文本内容不做转发
             TdApi.MessageText messageText = (TdApi.MessageText) update.message.content;
             String text = messageText.text.text;
-            if(text.contains("chatid")) {
+            if(text.contains("chatid") || text.contains("讯息已失效")) {
                 return;
             }
             TdApi.Message message = update.message;
@@ -295,15 +296,15 @@ public class MyUserBot {
 //                new long[]{update.message.id}, null, false, false, false), result -> {
 //        });
         //user bot发送查单文本消息
-        TdApi.SendMessage textReq = new TdApi.SendMessage();
-//            textReq.replyToMessageId = update.message.replyToMessageId;
-        textReq.chatId = notifyChatId;
-        TdApi.InputMessageText textContent = new TdApi.InputMessageText();
-        textContent.text = new TdApi.FormattedText("查单 " + orderNo, null);
-        textReq.inputMessageContent = textContent;
-        client.send(textReq, result -> {
-            // Handle the response if needed
-        });
+//        TdApi.SendMessage textReq = new TdApi.SendMessage();
+////            textReq.replyToMessageId = update.message.replyToMessageId;
+//        textReq.chatId = notifyChatId;
+//        TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+//        textContent.text = new TdApi.FormattedText("查单 " + orderNo, null);
+//        textReq.inputMessageContent = textContent;
+//        client.send(textReq, result -> {
+//            // Handle the response if needed
+//        });
     }
 
     private void replyGroupMessage(TdApi.UpdateNewMessage update, String message) {

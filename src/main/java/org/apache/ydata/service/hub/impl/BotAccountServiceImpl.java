@@ -67,4 +67,11 @@ public class BotAccountServiceImpl implements BotAccountService {
             return null;
         }
     }
+
+    @Override
+    public BotAccount selectByBotUsername(String username) {
+        BotAccount account = new BotAccount();
+        account.setUsername(username);
+        return mapper.selectOne(account);
+    }
 }

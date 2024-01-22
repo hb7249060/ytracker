@@ -8,4 +8,6 @@ public interface BotAccountService extends BaseService {
     BotAccount selectByBotId(Long userId);
 
     BotAccount save(Long userId, String username, String nickname);
+
+    BotAccount selectByBotUsername(String username);
 }

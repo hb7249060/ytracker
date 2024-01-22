@@ -74,4 +74,18 @@ public class HubGroupServiceImpl implements HubGroupService {
         return pageResult;
     }
 
+    @Override
+    public HubGroup selectByHubIdAndChatId(Long hubId, Long chatId) {
+        HubGroup hubGroup = new HubGroup();
+        hubGroup.setHubId(hubId);
+        hubGroup.setTelChatId(chatId);
+        return mapper.selectOne(hubGroup);
+    }
+
+    @Override
+    public HubGroup selectByChatId(Long chatId) {
+        HubGroup hubGroup = new HubGroup();
+        hubGroup.setTelChatId(chatId);
+        return mapper.selectOne(hubGroup);
+    }
 }

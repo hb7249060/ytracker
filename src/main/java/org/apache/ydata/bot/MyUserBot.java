@@ -15,12 +15,12 @@ import org.apache.ydata.service.hub.BotAccountService;
 import org.apache.ydata.service.hub.HubGroupBotService;
 import org.apache.ydata.service.hub.HubGroupService;
 import org.apache.ydata.service.hub.HubInfoService;
+import org.apache.ydata.utils.IdUtil;
 import org.apache.ydata.vo.SystemSettingsKeys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.annotation.Resource;
 import java.nio.file.Path;
@@ -77,6 +77,9 @@ public class MyUserBot {
     RedisUtils redisUtils;
     @Resource
     RedisTemplate redisTemplate;
+
+    @Resource
+    private IdUtil idUtil;
 
     public void init(BotStater botStater) throws Exception {
         this.botStater = botStater;
@@ -149,6 +152,25 @@ public class MyUserBot {
                 });
                 return;
             }
+            //纯文本内容不做转发，仅针对指定的消息内容解析
+            //@yh_assistant_bot help
+            //@yh_assistant_bot bind [ydata后台的三方系统ID编号]
+            //@yh_assistant_bot listener [四方机器人username]
+            String text = messageText.text.text.trim();
+            if(text.contains("@" + userBotUsername)) {
+                String cmd = text.replace("@" + userBotUsername, "").trim();
+                if("help".equals(cmd)) {
+                    //返回帮助信息
+                    sendUserBotHelpInfo(update);
+                } else if(cmd.startsWith("bind")) {
+                    //拿要绑定的ID，进行绑定
+                    bindChatId(cmd.replace("bind", "").trim(), update);
+                } else if(cmd.startsWith("listener")) {
+                    //拿要监听的机器人账号，进行绑定
+                    listenerBot(cmd.replace("listener", "").trim(), update);
+                }
+                return;
+            }
         }
         Long userId = messageSenderUser.userId;
         //判断userId在账号库里有没有记录，识别过就取账号库里的用户名
@@ -193,26 +215,7 @@ public class MyUserBot {
         TdApi.MessageContent messageContent = update.message.content;
         // 分析消息内容，转发至通知机器人，并回复原消息
         if (messageContent instanceof TdApi.MessageText) {
-            if(true) return;//纯文本内容不做转发
-            TdApi.MessageText messageText = (TdApi.MessageText) update.message.content;
-            String text = messageText.text.text;
-            if(text.contains("chatid") || text.contains("讯息已失效")) {
-                return;
-            }
-            TdApi.Message message = update.message;
-            long msgId = update.message.id;
-            long replyToMessageId = update.message.replyToMessageId;
-            //分析消息内容
-            log.info("get MessageText content1: " + text);
-            //分析消息内容
-            //第一种：直接是订单号
-            //第二种：订单号+空格+内容
-            text = text.replaceAll("订单反馈", "")
-                    .replaceAll("订单ID:", "")
-                    .replaceAll("\n", "");
-            log.info("get MessageText content2: " + text);
-            //进行查单动作
-            confirmOrder(update, text, botAccount);
+            //纯文本内容不做转发
         } else if(messageContent instanceof TdApi.MessagePhoto) {
             TdApi.MessagePhoto messagePhoto = (TdApi.MessagePhoto) update.message.content;
             TdApi.FormattedText caption = messagePhoto.caption;
@@ -236,6 +239,118 @@ public class MyUserBot {
             //进行查单动作
             confirmOrder(update, captionText, botAccount);
         }
+    }
+
+    /**
+     * 发送帮助信息，指导如何进行系统绑定
+     * @param update
+     */
+    private void sendUserBotHelpInfo(TdApi.UpdateNewMessage update) {
+        TdApi.SendMessage textReq = new TdApi.SendMessage();
+        textReq.chatId = update.message.chatId;
+        TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+        textContent.text = new TdApi.FormattedText("绑定步骤：\n1.使用 \"@" + userBotUsername
+                + "  bind  [systemId]\" 命令，将群组绑定到系统；\n" +
+                "2.使用 \"@" + userBotUsername + "  listener  [@目标机器人]\" 命令，监听指定机器人的查单消息。",
+                null);
+        textReq.inputMessageContent = textContent;
+        client.send(textReq, result -> {
+            // Handle the response if needed
+        });
+    }
+
+    /**
+     * 绑定三方系统的chatid
+     * @param systemId 要绑定的id
+     * @param update
+     */
+    private void bindChatId(String systemId, TdApi.UpdateNewMessage update) {
+        //创建群组信息
+        HubGroup hubGroup = hubGroupService.selectByHubIdAndChatId(Long.parseLong(systemId), update.message.chatId);
+        if(hubGroup == null) {
+            HubGroup group = new HubGroup();
+            group.setId(idUtil.nextId());
+            group.setHubId(Long.parseLong(systemId));
+            group.setHubName(systemId);
+            group.setTelChatId(update.message.chatId);
+            group.setTelGroupName(String.valueOf(update.message.chatId));
+            group.setCreated(System.currentTimeMillis());
+            group.setState(1);
+            hubGroupService.getMapper().insert(group);
+        }
+        //回复绑定成功
+        TdApi.SendMessage textReq = new TdApi.SendMessage();
+        textReq.chatId = update.message.chatId;
+        textReq.replyToMessageId = update.message.id;
+        TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+        textContent.text = new TdApi.FormattedText("绑定完成！下一步设置要监听的对象",
+                null);
+        textReq.inputMessageContent = textContent;
+        client.send(textReq, result -> {
+            // Handle the response if needed
+        });
+    }
+
+    /**
+     * 设置要监听的机器人对象
+     * @param listenerBotUserName
+     * @param update
+     */
+    private void listenerBot(String listenerBotUserName, TdApi.UpdateNewMessage update) {
+        //查询机器人信息
+        BotAccount botAccount = botAccountService.selectByBotUsername(listenerBotUserName.replace("@", "").trim());
+        if(botAccount == null) {
+            //回复：未查询到要绑定的用户信息，请稍后重试
+            TdApi.SendMessage textReq = new TdApi.SendMessage();
+            textReq.chatId = update.message.chatId;
+            textReq.replyToMessageId = update.message.id;
+            TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+            textContent.text = new TdApi.FormattedText("未查询到要绑定的用户信息，请稍后重试！",
+                    null);
+            textReq.inputMessageContent = textContent;
+            client.send(textReq, result -> {
+                // Handle the response if needed
+            });
+            return;
+        }
+        //绑定机器人
+        HubGroup hubGroup = hubGroupService.selectByChatId(update.message.chatId);
+        if(hubGroup == null) {
+            TdApi.SendMessage textReq = new TdApi.SendMessage();
+            textReq.chatId = update.message.chatId;
+            textReq.replyToMessageId = update.message.id;
+            TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+            textContent.text = new TdApi.FormattedText("请先绑定系统群组，再设置要监听的机器人！",
+                    null);
+            textReq.inputMessageContent = textContent;
+            client.send(textReq, result -> {
+                // Handle the response if needed
+            });
+            return;
+        }
+        //查询是否已设置过机器人
+        HubGroupBot hubGroupBot = hubGroupBotService.selectByChatIdAndBotId(update.message.chatId, botAccount.getId());
+        if(hubGroupBot == null) {
+            hubGroupBot = new HubGroupBot();
+            hubGroupBot.setGroupId(hubGroup.getId());
+            hubGroupBot.setTelChatId(update.message.chatId);
+            hubGroupBot.setTelBotId(botAccount.getId());
+            hubGroupBot.setTelBotUsername(botAccount.getUsername());
+            hubGroupBot.setCreated(System.currentTimeMillis());
+            hubGroupBot.setState(1);
+            hubGroupBotService.getMapper().insert(hubGroupBot);
+        }
+        //回复：设置监听成功
+        TdApi.SendMessage textReq = new TdApi.SendMessage();
+        textReq.chatId = update.message.chatId;
+        textReq.replyToMessageId = update.message.id;
+        TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+        textContent.text = new TdApi.FormattedText("设置监听成功！",
+                null);
+        textReq.inputMessageContent = textContent;
+        client.send(textReq, result -> {
+            // Handle the response if needed
+        });
     }
 
     /**

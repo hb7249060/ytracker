@@ -10,10 +10,12 @@ import org.apache.ydata.model.hub.BotAccount;
 import org.apache.ydata.model.hub.HubGroup;
 import org.apache.ydata.model.hub.HubGroupBot;
 import org.apache.ydata.model.hub.HubInfo;
+import org.apache.ydata.service.RedisUtils;
 import org.apache.ydata.service.hub.BotAccountService;
 import org.apache.ydata.service.hub.HubGroupBotService;
 import org.apache.ydata.service.hub.HubGroupService;
 import org.apache.ydata.service.hub.HubInfoService;
+import org.apache.ydata.vo.SystemSettingsKeys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -21,6 +23,7 @@ import org.springframework.util.ObjectUtils;
 import javax.annotation.Resource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -66,6 +69,9 @@ public class MyUserBot {
     private ZyAdapter zyAdapter;
 
     private BotStater botStater;
+
+    @Resource
+    RedisUtils redisUtils;
 
     public void init(BotStater botStater) throws Exception {
         this.botStater = botStater;
@@ -131,7 +137,7 @@ public class MyUserBot {
                 TdApi.SendMessage textReq = new TdApi.SendMessage();
                 textReq.chatId = update.message.chatId;
                 TdApi.InputMessageText textContent = new TdApi.InputMessageText();
-                textContent.text = new TdApi.FormattedText("当前对话ChatId是：" + String.valueOf(update.message.chatId) + "\n请使用此ChatId在系统中与您的账号绑定", null);
+                textContent.text = new TdApi.FormattedText("当前对话ChatId：" + String.valueOf(update.message.chatId) , null);
                 textReq.inputMessageContent = textContent;
                 client.send(textReq, result -> {
                     // Handle the response if needed
@@ -211,9 +217,16 @@ public class MyUserBot {
             //第一种：直接是订单号
             //第二种：订单号+空格+内容
             //第三种：订单反馈\n订单ID:\n202312140332429757485153
-            captionText = captionText.replaceAll("订单反馈", "")
-                    .replaceAll("订单ID:", "")
-                    .replaceAll("\n", "");
+            String filterWords = redisUtils.getSysConfig(SystemSettingsKeys.BOT_ANALYSIS_FILTER_WORDS);
+            if(!ObjectUtils.isEmpty(filterWords)) {
+                List<String> filterWordList = Arrays.asList(filterWords.split("[|]"));
+                if(!ObjectUtils.isEmpty(filterWordList)) {
+                    for (String word : filterWordList) {
+                        captionText = captionText.replaceAll(word, "");
+                    }
+                }
+                captionText = captionText.replaceAll("\n", "");
+            }
             log.info("get MessagePhoto content4: " + captionText);
             //进行查单动作
             confirmOrder(update, captionText, botAccount);
@@ -247,12 +260,17 @@ public class MyUserBot {
                     String message = jsonObject.getString("message");
                     if(code == 200) {
                         //3.查单通知进行转发
-                        String data = jsonObject.getString("data");
-                        Long notifyChatId = Long.parseLong(data);
+                        JSONObject data = null;
+                        if(jsonObject.get("data") instanceof String) {
+                            data = new JSONObject();
+                            data.put("targetChatId", jsonObject.getString("data"));
+                        } else if(jsonObject.get("data") instanceof JSONObject) {
+                            data = jsonObject.getJSONObject("data");
+                        }
                         if(botStater != null && botStater.getNotifyBot() != null) {
-                            log.info("confirmOrder: {} 转发查单消息 to {}", orderNo, notifyChatId);
+                            log.info("confirmOrder: {} 转发查单消息 to {}", orderNo, data);
                             //直接用userbot转发查单消息
-                            sendConfirmOrderMsg(update, notifyChatId, orderNo);
+                            sendConfirmOrderMsg(update, data, orderNo);
                             message = orderNo + " 查单消息已转发";
                         }
                     } else {
@@ -270,22 +288,32 @@ public class MyUserBot {
     /**
      * 发送查单消息
      * @param update
-     * @param notifyChatId
+     * @param data 从主服务获取的订单绑定信息
      * @param orderNo
      */
-    private void sendConfirmOrderMsg(TdApi.UpdateNewMessage update, Long notifyChatId, String orderNo) {
+    private void sendConfirmOrderMsg(TdApi.UpdateNewMessage update, JSONObject data, String orderNo) {
         //TODO 下载消息内容，通过bot进行点对点通知查单
         if(update.message.content instanceof TdApi.MessagePhoto) {
             TdApi.MessagePhoto messagePhoto = (TdApi.MessagePhoto) update.message.content;
             TdApi.DownloadFile downloadFile = new TdApi.DownloadFile();
-            downloadFile.fileId = messagePhoto.photo.sizes[0].photo.id;
+            downloadFile.fileId = messagePhoto.photo.sizes[messagePhoto.photo.sizes.length-1].photo.id;
             downloadFile.priority = 1;
             downloadFile.synchronous = true;
             client.send(downloadFile, file -> {
                 log.info("downloadFile: {}", file.get().local.path);
                 if(!ObjectUtils.isEmpty(file.get().local.path)) {
                     //TODO 機器人發送消息
-                    botStater.getNotifyBot().sendImageText(file.get().local.path, messagePhoto.caption.text, notifyChatId);
+                    String caption = messagePhoto.caption.text;
+                    if(data.containsKey("channelCodeName")) {
+                        caption += "\n订单通道：" + data.get("channelCodeName");
+                    }
+                    if(data.containsKey("orderNo")) {
+                        caption += "\n订单号：" + data.get("orderNo");
+                    }
+                    if(data.containsKey("username")) {
+                        caption += "\n码商：" + data.get("username");
+                    }
+                    botStater.getNotifyBot().sendImageText(file.get().local.path, caption, data.getLong("targetChatId"));
                 }
             });
         }

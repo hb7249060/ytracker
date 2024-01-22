@@ -3,10 +3,14 @@ package org.apache.ydata.bot;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ydata.service.RedisUtils;
 import org.apache.ydata.vo.SystemSettingsKeys;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -18,6 +22,11 @@ public class BotMsgSender {
 
     @Resource
     private RedisUtils redisUtils;
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Resource
+    private MyUserBot myUserBot;
 
     /**
      * 回复chatId信息 - 通知机器人
@@ -74,5 +83,55 @@ public class BotMsgSender {
                 }
             }
         }
+    }
+
+    /**
+     * 发送内联菜单点击响应
+     * @param bot 查单机器人
+     * @param update 原消息[带callbackquery]
+     * @param orderNo 目标订单
+     * @param msg 目标内容
+     */
+    public void sendCallbackResult(TelegramLongPollingBot bot, Update update, String orderNo, String msg) {
+        if(ObjectUtils.isEmpty(orderNo)) return;
+        if(!redisTemplate.hasKey(orderNo)) {
+            //超72小时过期的消息回执
+            SendMessage message = new SendMessage();
+            message.setChatId(update.getMessage().getChatId());
+            message.setParseMode("HTML");
+            message.setText("已过太久，讯息已失效，没办法帮您处理了");
+            try {
+                bot.execute(message);
+            } catch (TelegramApiException e) {
+                log.error(e.getLocalizedMessage());
+            }
+            return;
+        }
+        String chatAndMsgId = (String) redisTemplate.opsForValue().get(orderNo);
+        String chatId  = chatAndMsgId.split(":")[0];
+        String msgId  = chatAndMsgId.split(":")[1];
+        //TODO 机器人回复：查单群点击的消息
+        SendMessage message = new SendMessage();
+        message.setChatId(update.getCallbackQuery().getMessage().getChatId());
+        message.setReplyToMessageId(update.getCallbackQuery().getMessage().getMessageId());
+        message.setParseMode("HTML");
+        message.setText("处理结果：<b>" + msg + "</b>\n处理人：<b>" + update.getCallbackQuery().getFrom().getFirstName() + "</b>");
+        try {
+            bot.execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getLocalizedMessage());
+        }
+        //TODO 重新编辑机器人原消息，去掉内联菜单
+        EditMessageCaption editMessageCaption = new EditMessageCaption();
+        editMessageCaption.setChatId(update.getCallbackQuery().getMessage().getChatId());
+        editMessageCaption.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+        editMessageCaption.setCaption(update.getCallbackQuery().getMessage().getCaption());
+        try {
+            bot.execute(editMessageCaption);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        //TODO 用户机器人回复：商户群原查单消息
+        myUserBot.replayCallbackQuery(chatId, msgId, msg);
     }
 }

@@ -17,14 +17,17 @@ import org.apache.ydata.service.hub.HubGroupService;
 import org.apache.ydata.service.hub.HubInfoService;
 import org.apache.ydata.vo.SystemSettingsKeys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.annotation.Resource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -72,6 +75,8 @@ public class MyUserBot {
 
     @Resource
     RedisUtils redisUtils;
+    @Resource
+    RedisTemplate redisTemplate;
 
     public void init(BotStater botStater) throws Exception {
         this.botStater = botStater;
@@ -305,17 +310,23 @@ public class MyUserBot {
                     //TODO 機器人發送消息
                     String caption = messagePhoto.caption.text;
                     if(data.containsKey("channelCodeName")) {
-                        caption += "\n订单通道：" + data.get("channelCodeName");
+                        caption += "\n订单通道：" + data.getString("channelCodeName");
                     }
                     if(data.containsKey("orderNo")) {
-                        caption += "\n订单号：" + data.get("orderNo");
+                        caption += "\n订单号：" + data.getString("orderNo");
                     }
                     if(data.containsKey("username")) {
-                        caption += "\n码商：" + data.get("username");
+                        caption += "\n码商：" + data.getString("username");
                     }
-                    botStater.getNotifyBot().sendImageText(file.get().local.path, caption, data.getLong("targetChatId"));
+                    botStater.getNotifyBot().sendImageText(file.get().local.path, caption, data.getLong("targetChatId"),
+                            data.containsKey("orderNo") ? data.getString("orderNo") : "");
                 }
             });
+            //TODO 将orderNo 对应的 msgid 和 chatid 放入redis中绑定[有效期72小时]，用于回调响应
+            if(data.containsKey("orderNo")) {
+                redisTemplate.opsForValue().set(data.getString("orderNo"), update.message.chatId + ":" + update.message.id,
+                        72, TimeUnit.HOURS);
+            }
         }
 
         //user bot转发查单消息
@@ -341,6 +352,24 @@ public class MyUserBot {
         textReq.chatId = update.message.chatId;
         TdApi.InputMessageText textContent = new TdApi.InputMessageText();
         textContent.text = new TdApi.FormattedText(message, null);
+        textReq.inputMessageContent = textContent;
+        client.send(textReq, result -> {
+            // Handle the response if needed
+        });
+    }
+
+    /**
+     * 处理查单内联菜单点击结果
+     * @param chatId
+     * @param msgId
+     * @param msg
+     */
+    public void replayCallbackQuery(String chatId, String msgId, String msg) {
+        TdApi.SendMessage textReq = new TdApi.SendMessage();
+        textReq.replyToMessageId = Long.parseLong(msgId);
+        textReq.chatId = Long.parseLong(chatId);
+        TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+        textContent.text = new TdApi.FormattedText(msg, null);
         textReq.inputMessageContent = textContent;
         client.send(textReq, result -> {
             // Handle the response if needed

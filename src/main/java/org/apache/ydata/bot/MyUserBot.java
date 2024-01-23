@@ -180,7 +180,8 @@ public class MyUserBot {
                 log.info("GetUser={}, result={}", userId, result);
                 TdApi.User user = result.get();
                 //保存入账号库
-                BotAccount account = botAccountService.save(userId, user.usernames.editableUsername, user.firstName + user.lastName);
+                BotAccount account = botAccountService.save(userId,
+                        user.usernames != null ? user.usernames.editableUsername : (user.firstName + user.lastName), user.firstName + user.lastName);
                 if(account != null) {
                     log.info("SaveUser={} success!", userId);
                     //验证消息来源，解析格式，转发
@@ -367,39 +368,37 @@ public class MyUserBot {
         if(botAccount == null || ObjectUtils.isEmpty(orderNo)) return;
         //TODO 查单
         //根据消息来源方，查询对应的群组和三方信息
-        List<HubGroupBot> hubGroupBotList = hubGroupBotService.selectByBotId(botAccount.getId());
-        if(ObjectUtils.isEmpty(hubGroupBotList)) return;
-        for(HubGroupBot hubGroupBot : hubGroupBotList) {
-            HubGroup hubGroup = (HubGroup) hubGroupService.getMapper().selectByPrimaryKey(hubGroupBot.getGroupId());
-            if(hubGroup != null) {
-                HubInfo hubInfo = hubInfoService.selectByPrimaryKey(hubGroup.getHubId());
-                if(hubInfo != null) {
-                    //2.向三方接口发送请求，查询该订单绑定的码商信息
-                    JSONObject jsonObject = zyAdapter.getBindChatId(hubInfo, orderNo);
-                    int code = jsonObject.getIntValue("code");
-                    String message = jsonObject.getString("message");
-                    if(code == 200) {
-                        //3.查单通知进行转发
-                        JSONObject data = null;
-                        if(jsonObject.get("data") instanceof String) {
-                            data = new JSONObject();
-                            data.put("targetChatId", jsonObject.getString("data"));
-                        } else if(jsonObject.get("data") instanceof JSONObject) {
-                            data = jsonObject.getJSONObject("data");
-                        }
-                        if(botStater != null && botStater.getNotifyBot() != null) {
-                            log.info("confirmOrder: {} 转发查单消息 to {}", orderNo, data);
-                            //直接用userbot转发查单消息
-                            sendConfirmOrderMsg(update, data, orderNo);
-                            message = orderNo + " 查单消息已转发";
-                        }
-                    } else {
-                        message = orderNo + " " + message;
+        HubGroupBot hubGroupBot = hubGroupBotService.selectByChatIdAndBotId(update.message.chatId, botAccount.getId());
+        if(hubGroupBot == null) return;
+        HubGroup hubGroup = (HubGroup) hubGroupService.getMapper().selectByPrimaryKey(hubGroupBot.getGroupId());
+        if(hubGroup != null) {
+            HubInfo hubInfo = hubInfoService.selectByPrimaryKey(hubGroup.getHubId());
+            if(hubInfo != null) {
+                //2.向三方接口发送请求，查询该订单绑定的码商信息
+                JSONObject jsonObject = zyAdapter.getBindChatId(hubInfo, orderNo);
+                int code = jsonObject.getIntValue("code");
+                String message = jsonObject.getString("message");
+                if(code == 200) {
+                    //3.查单通知进行转发
+                    JSONObject data = null;
+                    if(jsonObject.get("data") instanceof String) {
+                        data = new JSONObject();
+                        data.put("targetChatId", jsonObject.getString("data"));
+                    } else if(jsonObject.get("data") instanceof JSONObject) {
+                        data = jsonObject.getJSONObject("data");
                     }
-                    //4.回复四方机器人消息
-                    log.info("confirmOrder: {} 回复四方机器人消息 to {}", orderNo, update.message.chatId);
-                    replyGroupMessage(update, message);
+                    if(botStater != null && botStater.getNotifyBot() != null) {
+                        log.info("confirmOrder: {} 转发查单消息 to {}", orderNo, data);
+                        //直接用userbot转发查单消息
+                        sendConfirmOrderMsg(update, data, orderNo);
+                        message = orderNo + " 查单消息已转发";
+                    }
+                } else {
+                    message = orderNo + " " + message;
                 }
+                //4.回复四方机器人消息
+                log.info("confirmOrder: {} 回复四方机器人消息 to {}", orderNo, update.message.chatId);
+                replyGroupMessage(update, message);
             }
         }
 
@@ -432,6 +431,9 @@ public class MyUserBot {
                     }
                     if(data.containsKey("username")) {
                         caption += "\n码商：" + data.getString("username");
+                    }
+                    if(data.containsKey("telAccount")) {
+                        caption += " @" + data.getString("telAccount").replace("@","");
                     }
                     botStater.getNotifyBot().sendImageText(file.get().local.path, caption, data.getLong("targetChatId"),
                             data.containsKey("orderNo") ? data.getString("orderNo") : "");

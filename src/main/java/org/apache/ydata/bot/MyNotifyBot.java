@@ -72,6 +72,9 @@ public class MyNotifyBot extends TelegramLongPollingBot {
         } else if(data.startsWith(CALLBACK_ORDER_MISMATCH)) {
             //单图不符
             msg = CALLBACK_ORDER_MISMATCH_TEXT;
+        } else if(data.startsWith(CALLBACK_ORDER_MODIFYFEE)) {
+            //修改金额
+            msg = CALLBACK_ORDER_MODIFYFEE_TEXT;
         }
         if(!DEFAULT_ORDER_NO.equals(orderNo)) {
             mBotMsgSender.sendCallbackResult(this, update, orderNo, msg);
@@ -89,11 +92,13 @@ public class MyNotifyBot extends TelegramLongPollingBot {
     }
 
     private static final String CALLBACK_ORDER_SUCCESS = "order:success:";
-    private static final String CALLBACK_ORDER_SUCCESS_TEXT = "成功";
+    private static final String CALLBACK_ORDER_SUCCESS_TEXT = "已补单";
     private static final String CALLBACK_ORDER_FAIL = "order:fail:";
-    private static final String CALLBACK_ORDER_FAIL_TEXT = "已退款";
+    private static final String CALLBACK_ORDER_FAIL_TEXT = "未付款";
     private static final String CALLBACK_ORDER_MISMATCH = "order:mismatch:";
     private static final String CALLBACK_ORDER_MISMATCH_TEXT = "单图不符";
+    private static final String CALLBACK_ORDER_MODIFYFEE = "order:modifyfee:";
+    private static final String CALLBACK_ORDER_MODIFYFEE_TEXT = "修改金额";
     private static final String DEFAULT_ORDER_NO = "0123456789ABCDEFG";
 
     public void sendImageText(String localFilepath, String captionText, Long notifyChatId, String orderNo) {
@@ -101,13 +106,15 @@ public class MyNotifyBot extends TelegramLongPollingBot {
             orderNo = DEFAULT_ORDER_NO;   //兼容旧代码防止order为空情况
         }
         //内联菜单
-        InlineKeyboardButton button1 = InlineKeyboardButton.builder().text("成功").callbackData(CALLBACK_ORDER_SUCCESS + orderNo).build();
-        InlineKeyboardButton button2 = InlineKeyboardButton.builder().text("已退款").callbackData(CALLBACK_ORDER_FAIL + orderNo).build();
-        InlineKeyboardButton button3 = InlineKeyboardButton.builder().text("单图不符").callbackData(CALLBACK_ORDER_MISMATCH + orderNo).build();
+        InlineKeyboardButton button1 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_SUCCESS_TEXT).callbackData(CALLBACK_ORDER_SUCCESS + orderNo).build();
+        InlineKeyboardButton button2 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_FAIL_TEXT).callbackData(CALLBACK_ORDER_FAIL + orderNo).build();
+        InlineKeyboardButton button3 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_MISMATCH_TEXT).callbackData(CALLBACK_ORDER_MISMATCH + orderNo).build();
+        InlineKeyboardButton button4 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_MODIFYFEE_TEXT).callbackData(CALLBACK_ORDER_MODIFYFEE + orderNo).build();
         List<InlineKeyboardButton> list = new ArrayList<>();
         list.add(button1);
         list.add(button2);
         list.add(button3);
+        list.add(button4);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         Collections.addAll(rowList, list);
         InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder().keyboard(rowList).build();

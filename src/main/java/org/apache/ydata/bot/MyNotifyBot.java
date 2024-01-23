@@ -110,13 +110,14 @@ public class MyNotifyBot extends TelegramLongPollingBot {
         InlineKeyboardButton button2 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_FAIL_TEXT).callbackData(CALLBACK_ORDER_FAIL + orderNo).build();
         InlineKeyboardButton button3 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_MISMATCH_TEXT).callbackData(CALLBACK_ORDER_MISMATCH + orderNo).build();
         InlineKeyboardButton button4 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_MODIFYFEE_TEXT).callbackData(CALLBACK_ORDER_MODIFYFEE + orderNo).build();
-        List<InlineKeyboardButton> list = new ArrayList<>();
-        list.add(button1);
-        list.add(button2);
-        list.add(button3);
-        list.add(button4);
+        List<InlineKeyboardButton> list1 = new ArrayList<>();
+        list1.add(button1);
+        list1.add(button2);
+        List<InlineKeyboardButton> list2 = new ArrayList<>();
+        list2.add(button3);
+        list2.add(button4);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        Collections.addAll(rowList, list);
+        Collections.addAll(rowList, list1, list2);
         InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder().keyboard(rowList).build();
 
         //图文消息

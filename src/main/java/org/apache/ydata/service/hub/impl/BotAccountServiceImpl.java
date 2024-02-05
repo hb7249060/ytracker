@@ -72,6 +72,11 @@ public class BotAccountServiceImpl implements BotAccountService {
     public BotAccount selectByBotUsername(String username) {
         BotAccount account = new BotAccount();
         account.setUsername(username);
-        return mapper.selectOne(account);
+        Condition condition = new Condition(BotAccount.class);
+        condition.createCriteria().andEqualTo("username", username);
+        condition.orderBy("id").desc();
+        PageHelper.startPage(1, 1);
+        List<BotAccount> accountList = mapper.selectByCondition(condition);
+        return !ObjectUtils.isEmpty(accountList) ? accountList.get(0) : null;
     }
 }

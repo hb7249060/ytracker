@@ -141,7 +141,7 @@ public class MyUserBot {
     private void onUpdateNewMessage(TdApi.UpdateNewMessage update, TdApi.MessageSenderUser messageSenderUser) {
         if(update.message.content instanceof TdApi.MessageText) {
             TdApi.MessageText messageText = (TdApi.MessageText) update.message.content;
-            if(messageText.text.text.trim().equals("chatid")) {
+            if(messageText.text.text.trim().contains("chatid")) {
                 TdApi.SendMessage textReq = new TdApi.SendMessage();
                 textReq.chatId = update.message.chatId;
                 TdApi.InputMessageText textContent = new TdApi.InputMessageText();
@@ -159,15 +159,19 @@ public class MyUserBot {
             String text = messageText.text.text.trim();
             if(text.contains("@" + userBotUsername)) {
                 String cmd = text.replace("@" + userBotUsername, "").trim();
+                log.info("process cmd : {}", cmd);
                 if("help".equals(cmd)) {
                     //返回帮助信息
                     sendUserBotHelpInfo(update);
                 } else if(cmd.startsWith("bind")) {
                     //拿要绑定的ID，进行绑定
                     bindChatId(cmd.replace("bind", "").trim(), update);
-                } else if(cmd.startsWith("listener")) {
+                } else if(cmd.startsWith("listener") || cmd.startsWith("listen")) {
                     //拿要监听的机器人账号，进行绑定
-                    listenerBot(cmd.replace("listener", "").trim(), update);
+                    listenerBot(cmd.replace("listener", "").replace("listen", "").trim(), update);
+                } else if(cmd.startsWith("unlistener") || cmd.startsWith("unlisten")) {
+                    //拿要监听的机器人账号，进行绑定
+                    unlistenerBot(cmd.replace("unlistener", "").replace("unlisten", "").trim(), update);
                 }
                 return;
             }
@@ -212,7 +216,7 @@ public class MyUserBot {
             return;
         }
         //处理消息
-        log.info("recv msg from user id={} username={}, content={}", userId, botAccount.getUsername(), update.toString());
+        log.info("recv msg from user id={} username={}", userId, botAccount.getUsername());
         TdApi.MessageContent messageContent = update.message.content;
         // 分析消息内容，转发至通知机器人，并回复原消息
         if (messageContent instanceof TdApi.MessageText) {
@@ -237,6 +241,11 @@ public class MyUserBot {
                 captionText = captionText.replaceAll("\n", "");
             }
             log.info("get MessagePhoto content4: " + captionText);
+            if(captionText.contains("系统订单号") && captionText.contains("通道订单号")) {
+                captionText = captionText.substring(captionText.indexOf("系统订单号") + "系统订单号".length(),
+                        captionText.indexOf("通道订单号")).replace(":", "").replace("：", "").trim();
+                log.info("get MessagePhoto content5: " + captionText);
+            }
             //进行查单动作
             confirmOrder(update, captionText, botAccount);
         }
@@ -266,6 +275,22 @@ public class MyUserBot {
      * @param update
      */
     private void bindChatId(String systemId, TdApi.UpdateNewMessage update) {
+        //查询有没有这个systemId
+        HubInfo hubInfo = hubInfoService.selectByPrimaryKey(Long.parseLong(systemId));
+        if(hubInfo == null) {
+            //回复：要绑定的systemId错误，请联系技术人员索要！
+            TdApi.SendMessage textReq = new TdApi.SendMessage();
+            textReq.chatId = update.message.chatId;
+            textReq.replyToMessageId = update.message.id;
+            TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+            textContent.text = new TdApi.FormattedText("要绑定的systemId错误，请联系技术人员索要！",
+                    null);
+            textReq.inputMessageContent = textContent;
+            client.send(textReq, result -> {
+                // Handle the response if needed
+            });
+            return;
+        }
         //创建群组信息
         HubGroup hubGroup = hubGroupService.selectByHubIdAndChatId(Long.parseLong(systemId), update.message.chatId);
         if(hubGroup == null) {
@@ -355,6 +380,46 @@ public class MyUserBot {
     }
 
     /**
+     * 设置要取消监听的机器人对象
+     * @param listenerBotUserName
+     * @param update
+     */
+    private void unlistenerBot(String listenerBotUserName, TdApi.UpdateNewMessage update) {
+        //查询机器人信息
+        BotAccount botAccount = botAccountService.selectByBotUsername(listenerBotUserName.replace("@", "").trim());
+        if(botAccount == null) {
+            //回复：未查询到要绑定的用户信息，请稍后重试
+            TdApi.SendMessage textReq = new TdApi.SendMessage();
+            textReq.chatId = update.message.chatId;
+            textReq.replyToMessageId = update.message.id;
+            TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+            textContent.text = new TdApi.FormattedText("未查询到要解除监听的用户信息，请稍后重试！",
+                    null);
+            textReq.inputMessageContent = textContent;
+            client.send(textReq, result -> {
+                // Handle the response if needed
+            });
+            return;
+        }
+        //查询是否已设置过机器人
+        HubGroupBot hubGroupBot = hubGroupBotService.selectByChatIdAndBotId(update.message.chatId, botAccount.getId());
+        if(hubGroupBot != null) {
+            hubGroupBotService.getMapper().delete(hubGroupBot);
+        }
+        //回复：设置监听成功
+        TdApi.SendMessage textReq = new TdApi.SendMessage();
+        textReq.chatId = update.message.chatId;
+        textReq.replyToMessageId = update.message.id;
+        TdApi.InputMessageText textContent = new TdApi.InputMessageText();
+        textContent.text = new TdApi.FormattedText("解除监听成功！",
+                null);
+        textReq.inputMessageContent = textContent;
+        client.send(textReq, result -> {
+            // Handle the response if needed
+        });
+    }
+
+    /**
      * 查单
      *
      * @param update
@@ -386,6 +451,13 @@ public class MyUserBot {
                         data.put("targetChatId", jsonObject.getString("data"));
                     } else if(jsonObject.get("data") instanceof JSONObject) {
                         data = jsonObject.getJSONObject("data");
+                        //判断data是否有orderState字段，有则判断状态，已回调则不转发
+                        if(data.containsKey("orderState") && data.getIntValue("orderState") == 1) {
+                            //订单已成功
+                            message = orderNo + " 已补单";
+                            replyGroupMessage(update, message);
+                            return;
+                        }
                     }
                     if(botStater != null && botStater.getNotifyBot() != null) {
                         log.info("confirmOrder: {} 转发查单消息 to {}", orderNo, data);
@@ -432,10 +504,11 @@ public class MyUserBot {
                     if(data.containsKey("username")) {
                         caption += "\n码商：" + data.getString("username");
                     }
-                    if(data.containsKey("telAccount")) {
+                    if(data.containsKey("telAccount") && !ObjectUtils.isEmpty(data.getString("telAccount"))) {
                         caption += " @" + data.getString("telAccount").replace("@","");
                     }
-                    botStater.getNotifyBot().sendImageText(file.get().local.path, caption, data.getLong("targetChatId"),
+                    botStater.getNotifyBot().sendImageText(file.get().local.path, caption,
+                            data.containsKey("targetChatId") ? Long.parseLong(data.getString("targetChatId").trim()) : null,
                             data.containsKey("orderNo") ? data.getString("orderNo") : "");
                 }
             });

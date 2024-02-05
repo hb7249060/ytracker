@@ -41,17 +41,17 @@ public class MyNotifyBot extends TelegramLongPollingBot {
         }
         if (update.hasMessage() && update.getMessage().hasText()) {
             String recvMsg = update.getMessage().getText();
-            if(recvMsg.equals("/chatid")) {
+            if(recvMsg.contains("chatid") || recvMsg.contains("chatid @" + username) || recvMsg.contains("chatid@" + username)) {
                 try {
                     mBotMsgSender.sendNotifyBotChatId(this, update);
                 } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
-            } else if(recvMsg.equals("/help")) {
+            } else if(recvMsg.contains("help") || recvMsg.contains("help@" + username) || recvMsg.contains("help @" + username)) {
                 try {
                     mBotMsgSender.sendNotifyBotHelpInfo(this, update);
                 } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         }

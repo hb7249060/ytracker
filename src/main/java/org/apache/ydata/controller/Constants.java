@@ -20,6 +20,9 @@ public interface Constants {
     String BUSINESS_HUBGROUP_LIST = "/admin/business/hubgroup/list.html";
     String BUSINESS_HUBGROUP_ADD_OR_UPDATE = "/admin/business/hubgroup/addOrUpdate.html";
 
+    String BUSINESS_HUBRECHARGE_RECORD_LIST = "/admin/business/hubrechargerecord/list.html";
+    String BUSINESS_HUBRECHARGE_RECORD_ADD_OR_UPDATE = "/admin/business/hubrechargerecord/addOrUpdate.html";
+
     String BUSINESS_BOT_ACCOUNT_LIST = "/admin/business/botaccount/list.html";
 
     //三方支付通道配置

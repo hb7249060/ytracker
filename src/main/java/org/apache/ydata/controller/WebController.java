@@ -122,6 +122,17 @@ public class WebController {
     public Object hubgroupAddOrUpdate() {
         return "config/hubgroup/addOrUpdate";
     }
+
+    @GetMapping(value = Constants.BUSINESS_HUBRECHARGE_RECORD_LIST)
+    public Object hubrechargerecordList() {
+        return "config/hubrechargerecord/list";
+    }
+
+    @GetMapping(value = Constants.BUSINESS_HUBRECHARGE_RECORD_ADD_OR_UPDATE)
+    public Object hubrechargerecordAddOrUpdate() {
+        return "config/hubrechargerecord/addOrUpdate";
+    }
+
     @GetMapping(value = Constants.BUSINESS_BOT_ACCOUNT_LIST)
     public Object botaccountList() {
         return "config/botaccount/list";

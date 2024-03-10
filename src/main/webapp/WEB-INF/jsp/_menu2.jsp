@@ -23,22 +23,25 @@
 			</dt>
 			<dd <c:if test="${fn:contains(requestURL, '/syncer/')}" > style="display:block" </c:if>>
 				<ul>
-					<li>
+					<li <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if>>
 						<a data-href="<c:url value='/admin/business/hubinfo/list.html' /> " data-title="三方管理" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 三方管理</a>
 					</li>
 					<li>
+						<a data-href="<c:url value='/admin/business/hubrechargerecord/list.html' /> " data-title="三方加款管理" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 三方加款管理</a>
+					</li>
+					<li <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if>>
 						<a data-href="<c:url value='/admin/business/stat/list.html' /> " data-title="三方数据统计" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 三方数据统计</a>
 					</li>
-					<li>
+					<li <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if>>
 						<a data-href="<c:url value='/admin/business/hubgroup/list.html' /> " data-title="三方群组配置" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 三方群组配置</a>
 					</li>
-					<li>
+					<li <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if>>
 						<a data-href="<c:url value='/admin/business/botaccount/list.html' /> " data-title="机器人信息库" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 机器人信息库</a>
 					</li>
 				</ul>
 			</dd>
 		</dl>
-		<dl id="menu-system5">
+		<dl id="menu-system5" <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if>>
 			<dt <c:if test="${fn:contains(requestURL, '/system/')}" > class="selected" </c:if>>
 				<i class="Hui-iconfont">&#xe61d;</i> 系统管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
 			</dt>

@@ -16,23 +16,16 @@
 <!--/_menu 作为公共模版分离出去-->
 
 <section>
-	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 三方配置 <span class="c-gray en">&gt;</span> 创建三方平台<a class="btn btn-success btn-refresh radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 业务管理 <span class="c-gray en">&gt;</span> 三方充值管理<a class="btn btn-success btn-refresh radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 	<div class="Hui-article">
 		<article class="cl pd-20">
-			<form id="form" action="<c:url value="/admin/business/hubinfo/getList" />" method="post" >
+			<form id="form" action="<c:url value="/admin/business/hubrechargerecord/getList" />" method="post" >
 				<div class="text-l">
 <%--					<input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin" name="datemin" class="input-text Wdate" style="width:120px;">--%>
 <%--					---%>
 <%--					<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d'})" id="datemax" name="datemax" class="input-text Wdate" style="width:120px;">--%>
 					<input type="text" class="input-text" style="width:150px" placeholder="三方" id="name" name="name" list="nameList">
 					<datalist id="nameList"></datalist>
-					<span class="select-box" style="width: auto;">
-						<select class="select" size="1" name="state" id="state" style="width: auto;">
-							<option value="">请选择</option>
-							<option value="1">正常</option>
-							<option value="0">停用</option>
-						</select>
-					</span>
 					<button type="button" onclick="search();" class="btn btn-success radius">
 						<i class="Hui-iconfont">&#xe665;</i> 查询
 					</button>
@@ -42,7 +35,7 @@
 			<div class="cl pd-5 bg-1 bk-gray mt-20">
 				<span class="l">
 <%--					<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>--%>
-					<a href="javascript:;" onclick="member_add('创建三方平台','<c:url value="/admin/business/hubinfo/addOrUpdate.html" />','800','')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 创建三方平台</a></span>
+					<a href="javascript:;" onclick="member_add('添加三方系统费','<c:url value="/admin/business/hubrechargerecord/addOrUpdate.html" />','800','')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加三方系统费</a></span>
 				</div>
 			<div class="mt-20">
 				<table class="table table-border table-bordered table-hover table-bg table-sort">
@@ -50,10 +43,8 @@
 						<tr class="text-c">
 <%--							<th width="20"><input type="checkbox" name="" value=""></th>--%>
 							<th width="40">ID</th>
-	<th width="20">名称</th>
-	<th width="10">费率</th>
-	<th width="80">接口地址</th>
-							<th width="20">状态</th>
+							<th width="30">三方信息</th>
+							<th width="30">金额</th>
 							<th width="30">备注</th>
 							<th width="50">创建时间</th>
 							<th width="40">操作</th>
@@ -177,47 +168,29 @@ $(function(){
 		// {"data": "id","bSortable": false},
 		{"data": "id","bSortable": false},
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
-				var html = data.name;
+				var html = data.hubName;
 				return html;
 			}},
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
-				var html = data.rate + "";
-				return html;
+				var html = data.amount == null ? "" : data.amount;
+				return data.amount;
 			}},
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
-				var html = data.apiUrl;
+				var html = data.memo == null ? "" : data.memo;
 				return html;
 			}},
-		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
-				var html = "";
-				if(data.state == 0) {
-					html += "<span style='color: #333; font-weight: bold'>停用</span>";
-				} else if(data.state == 1) {
-					html += "<span style='color: #19a97b; font-weight: bold'>正常</span>";
-				}
-				return html;
-		}},
-		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
-				var html = "";
-				if(data.twoFactorCode != undefined) {
-					html += "<span style='color: #19a97b; font-weight: bold'>已绑定Google验证器</span><br/>";
-				}
-				html += data.memo != undefined ? data.memo : "";
-				return html;
-		}},
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
 			return datetimeFormat(data.created);
 		}},
 		{"data": null, "className":"td-manage", "render": function (data, type, row, meta) {
 			var itemid = data.id;
-			var html = "<a title=\"编辑\" href=\"javascript:;\" onclick=\"member_edit('查看','<c:url value="/admin/business/hubinfo/viewStat.html" />?id=" + itemid + "'," + itemid + ", '850','')\" class=\"ml-5\" style=\"text-decoration:none\"><i class=\"Hui-iconfont\">&#xe720;</i>查看</a>" +
-					"\t\t<a title=\"编辑\" href=\"javascript:;\" onclick=\"member_edit('编辑','<c:url value="/admin/business/hubinfo/addOrUpdate.html" />?id=" + itemid + "'," + itemid + ", '850','')\" class=\"ml-5\" style=\"text-decoration:none\"><i class=\"Hui-iconfont\">&#xe6df;</i>编辑</a>" +
-					"\t\t<a title=\"删除\" href=\"javascript:;\" onclick=\"member_del(this, " + itemid + ",'" + data.name + "')\" class=\"ml-5\" style=\"text-decoration:none\"><i class=\"Hui-iconfont\">&#xe6e2;</i>删除</a>";
-			html += "<br/><a title=\"加款\" href=\"javascript:;\" onclick=\"member_edit('编辑','<c:url value="/admin/business/hubinfo/addSystemFee.html" />?id=" + itemid + "'," + itemid + ", '850','')\" class=\"ml-5\" style=\"text-decoration:none;color:red;\"><i class=\"Hui-iconfont\">&#xe63a;</i><b>加款</b></a>";
-			return html;
+			<%--var html = "<a title=\"编辑\" href=\"javascript:;\" onclick=\"member_edit('编辑','<c:url value="/admin/business/hubrechargerecord/addOrUpdate.html" />?id=" + itemid + "'," + itemid + ", '850','')\" class=\"ml-5\" style=\"text-decoration:none\"><i class=\"Hui-iconfont\">&#xe6df;</i>编辑</a>" +--%>
+			<%--		"\t\t<a title=\"删除\" href=\"javascript:;\" onclick=\"member_del(this, " + itemid + ",'" + data.name + "')\" class=\"ml-5\" style=\"text-decoration:none\"><i class=\"Hui-iconfont\">&#xe6e2;</i>删除</a>";--%>
+
+			return "";
 		}}
 	];
-	var listAction = "<c:url value="/admin/business/hubinfo/getList" />";
+	var listAction = "<c:url value="/admin/business/hubrechargerecord/getList" />";
 	$(dataTableInit(listAction, colModel,'',10));
 
 	getAllUsers();
@@ -277,31 +250,6 @@ function member_edit(title,url,id,w,h){
 /*密码-修改*/
 function change_password(title,url,id,w,h){
 	layer_show(title,url,w,h);	
-}
-/*用户-删除*/
-function member_del(obj,id, name){
-	layer.confirm('确认要删除[' + name + ']吗？',function(index){
-		var action = '<c:url value='/admin/business/hubinfo/deleteOne/'/>' + id;
-		$.ajax({
-			url: action,
-			type: 'DELETE',
-			data: '',
-			success: function (data) {
-				if(data.code == 200) {
-					$(obj).parents("tr").remove();
-					layer.msg(data.msg,{icon:1, time:1000});
-				} else {
-					layer.msg(data.msg,{icon:5, time:1000});
-				}
-			},
-			beforeSend: function (xhr) {
-			},
-			error: function (xhr, data, excption) {
-			},
-			complete: function (xhr, data) {
-			}
-		});
-	});
 }
 
 //查询所有码商

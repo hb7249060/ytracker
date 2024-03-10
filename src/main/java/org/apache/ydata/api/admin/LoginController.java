@@ -166,7 +166,7 @@ public class LoginController {
         String randomSecretKey = GoogleAuthenticationTool.generateSecretKey();
         Admin admin = (Admin) adminService.getMapper().selectByPrimaryKey(adminId);
         //此步设置的参数就是App扫码后展示出来的参数
-        String qrCodeString = GoogleAuthenticationTool.spawnScanQRString(admin.getUsername(), randomSecretKey, "银河码云");
+        String qrCodeString = GoogleAuthenticationTool.spawnScanQRString(admin.getUsername(), randomSecretKey, "聚合数据");
         String qrCodeImageBase64 = null;
         try {
             qrCodeImageBase64 = GoogleAuthenticationTool.createQRCode(qrCodeString, null, 512, 512);

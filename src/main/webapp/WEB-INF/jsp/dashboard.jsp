@@ -30,7 +30,8 @@
 				<span class="f-14" id="currTime"></span>
 			</p>
 			<p><hr></p>
-			<table class="table table-border table-bordered table-hover table-bg table-sort">
+
+			<table <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if> class="table table-border table-bordered table-hover table-bg table-sort">
 				<tr>
 					<td class="col-3">三方数量（全部/在用）</td>
 					<td class="col-9">
@@ -49,7 +50,7 @@
 				</tr>
 			</table>
 			<p><hr></p>
-			<table class="table table-border table-bordered table-hover table-bg table-sort">
+			<table <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if> class="table table-border table-bordered table-hover table-bg table-sort">
 				<tr>
 					<td class="col-3">昨日跑量</td>
 					<td class="col-9"><b style="color: red;">${totalPayAmount2}</b></td>

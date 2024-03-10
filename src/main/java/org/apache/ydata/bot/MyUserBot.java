@@ -246,6 +246,10 @@ public class MyUserBot {
                         captionText.indexOf("通道订单号")).replace(":", "").replace("：", "").trim();
                 log.info("get MessagePhoto content5: " + captionText);
             }
+            if(captionText.contains("订单创建时间")) {
+                captionText = captionText.substring(0, captionText.indexOf("订单创建时间"));
+                log.info("get MessagePhoto content6: " + captionText);
+            }
             //进行查单动作
             confirmOrder(update, captionText, botAccount);
         }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.beust.jcommander.internal.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ydata.model.hub.HubInfo;
+import org.apache.ydata.model.hub.HubRechargeRecord;
 import org.apache.ydata.utils.HttpUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ObjectUtils;
@@ -43,10 +44,18 @@ public class ZyAdapter implements BaseAdapter {
     @Override
     public JSONObject getBindChatId(HubInfo hubInfo, String orderNo) {
         Map dataMap = Maps.newHashMap();
-        dataMap.put("tradeNo", orderNo); //yyyy-MM-dd格式
+        dataMap.put("tradeNo", orderNo);
 
         JSONObject result = HttpUtils.post(hubInfo.getApiUrl() + "/getBindChatId", null, dataMap);
         return result;
     }
 
+    public JSONObject addSysFee(HubInfo hubInfo, HubRechargeRecord vo) {
+        Map dataMap = Maps.newHashMap();
+        dataMap.put("amount", String.valueOf(vo.getAmount()));
+        dataMap.put("memo", vo.getMemo());
+
+        JSONObject result = HttpUtils.post(hubInfo.getApiUrl() + "/recharge", null, dataMap);
+        return result;
+    }
 }

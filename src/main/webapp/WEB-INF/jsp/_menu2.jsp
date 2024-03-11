@@ -29,7 +29,7 @@
 					<li>
 						<a data-href="<c:url value='/admin/business/hubrechargerecord/list.html' /> " data-title="三方加款管理" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 三方加款管理</a>
 					</li>
-					<li <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if>>
+					<li>
 						<a data-href="<c:url value='/admin/business/stat/list.html' /> " data-title="三方数据统计" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 三方数据统计</a>
 					</li>
 					<li <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if>>

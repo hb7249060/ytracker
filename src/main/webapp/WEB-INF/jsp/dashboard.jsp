@@ -25,7 +25,7 @@
 	<div class="Hui-article">
 		<article class="cl pd-20">
 			<p class="f-20 text-success">
-				欢迎来到 <b>聚石塔</b>，您的数据归集专家！
+				欢迎来到 <b>聚石塔</b>！
 				<p>
 				<span class="f-14" id="currTime"></span>
 			</p>

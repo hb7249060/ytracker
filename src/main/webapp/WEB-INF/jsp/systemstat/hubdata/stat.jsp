@@ -16,7 +16,7 @@
 <!--/_menu 作为公共模版分离出去-->
 
 <section>
-	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 统计 <span class="c-gray en">&gt;</span> 三方日终<a class="btn btn-success btn-refresh radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+	<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 统计 <span class="c-gray en">&gt;</span> 三方数据统计<a class="btn btn-success btn-refresh radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 	<div class="Hui-article">
 		<article class="cl pd-20">
 			<form id="form" action="<c:url value="/admin/business/stat/getList" />" method="post" >
@@ -39,12 +39,14 @@
 <%--							<th width="20"><input type="checkbox" name="" value=""></th>--%>
 							<th width="20">名称</th>
 							<th width="15">日期</th>
-	<th width="40">总量</th>
-	<th width="40">成交量</th>
+							<c:if test="${AdminUser.created == null}">
+							<th width="40">总量</th>
+							<th width="40">成交量</th>
 							<th width="20">收益</th>
-	<th width="20">成功率</th>
-	<th width="20">系统余额</th>
-	<th width="35">更新时间</th>
+							</c:if>
+							<th width="20">成功率</th>
+							<th width="20">系统余额</th>
+							<th width="35">更新时间</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -74,6 +76,7 @@ $(function(){
 				var html = data.statDate;
 				return html;
 			}},
+		<c:if test="${AdminUser.created == null}">
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
 				var html = "总" + data.orderTotalCount + "单<br/>￥" + data.orderTotalFee;
 				return html;
@@ -86,12 +89,16 @@ $(function(){
 				var html = "<b style='color: #00B83F'>" + data.benfit + "</b>";
 				return html;
 			}},
+		</c:if>
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
 				var html = data.orderSuccessRate;
 				return html;
 			}},
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
-				var html = data.sysBalance != null ? data.sysBalance : "";
+				var html = data.sysBalance != null ? "<b>" + data.sysBalance + "</b>" : "";
+				if(data.sysBalance != null && data.sysBalance < 0) {
+					html = "<a style='color: red;'>" + html + "</a>";
+				}
 				return html;
 			}},
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {

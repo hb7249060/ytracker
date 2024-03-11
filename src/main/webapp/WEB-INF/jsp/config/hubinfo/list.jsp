@@ -213,7 +213,6 @@ $(function(){
 			var html = "<a title=\"编辑\" href=\"javascript:;\" onclick=\"member_edit('查看','<c:url value="/admin/business/hubinfo/viewStat.html" />?id=" + itemid + "'," + itemid + ", '850','')\" class=\"ml-5\" style=\"text-decoration:none\"><i class=\"Hui-iconfont\">&#xe720;</i>查看</a>" +
 					"\t\t<a title=\"编辑\" href=\"javascript:;\" onclick=\"member_edit('编辑','<c:url value="/admin/business/hubinfo/addOrUpdate.html" />?id=" + itemid + "'," + itemid + ", '850','')\" class=\"ml-5\" style=\"text-decoration:none\"><i class=\"Hui-iconfont\">&#xe6df;</i>编辑</a>" +
 					"\t\t<a title=\"删除\" href=\"javascript:;\" onclick=\"member_del(this, " + itemid + ",'" + data.name + "')\" class=\"ml-5\" style=\"text-decoration:none\"><i class=\"Hui-iconfont\">&#xe6e2;</i>删除</a>";
-			html += "<br/><a title=\"加款\" href=\"javascript:;\" onclick=\"member_edit('编辑','<c:url value="/admin/business/hubinfo/addSystemFee.html" />?id=" + itemid + "'," + itemid + ", '850','')\" class=\"ml-5\" style=\"text-decoration:none;color:red;\"><i class=\"Hui-iconfont\">&#xe63a;</i><b>加款</b></a>";
 			return html;
 		}}
 	];

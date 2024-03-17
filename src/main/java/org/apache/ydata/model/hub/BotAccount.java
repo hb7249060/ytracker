@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "bot_account")
+@Table(name = "bot_account", indexes = {@Index(columnList ="username")})
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BotAccount implements Serializable {
 

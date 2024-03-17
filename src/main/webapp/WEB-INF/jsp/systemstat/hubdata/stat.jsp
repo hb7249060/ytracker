@@ -39,9 +39,9 @@
 <%--							<th width="20"><input type="checkbox" name="" value=""></th>--%>
 							<th width="20">名称</th>
 							<th width="15">日期</th>
-							<c:if test="${AdminUser.created == null}">
 							<th width="40">总量</th>
 							<th width="40">成交量</th>
+							<c:if test="${AdminUser.created == null}">
 							<th width="20">收益</th>
 							</c:if>
 							<th width="20">成功率</th>
@@ -76,7 +76,6 @@ $(function(){
 				var html = data.statDate;
 				return html;
 			}},
-		<c:if test="${AdminUser.created == null}">
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
 				var html = "总" + data.orderTotalCount + "单<br/>￥" + data.orderTotalFee;
 				return html;
@@ -85,6 +84,7 @@ $(function(){
 				var html = "<b style='color: #00B83F'>成功" + data.orderTotalPayCount + "单<br/>￥" + data.orderPayFee + "<b>";
 				return html;
 			}},
+		<c:if test="${AdminUser.created == null}">
 		{"data": null,"bSortable": false, "render": function (data, type, row, meta) {
 				var html = "<b style='color: #00B83F'>" + data.benfit + "</b>";
 				return html;

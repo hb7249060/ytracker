@@ -11,7 +11,8 @@ import java.io.Serializable;
  */
 @Data
 @Entity
-@Table(name = "hub_group")
+@Table(name = "hub_group", indexes = {@Index(columnList ="hubId"),
+        @Index(columnList ="telChatId")})
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class HubGroup implements Serializable {
 

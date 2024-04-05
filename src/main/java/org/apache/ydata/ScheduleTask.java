@@ -7,6 +7,7 @@ import org.apache.ydata.model.hub.HubInfo;
 import org.apache.ydata.service.hub.HubDataService;
 import org.apache.ydata.service.hub.HubInfoService;
 import org.apache.ydata.utils.Tools;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,9 +34,13 @@ public class ScheduleTask {
     @Resource
     private ZyAdapter zyAdapter;
 
+    @Value("${config.isPub}")
+    private boolean isPub;
+
     @Scheduled(cron = "0 0/30 * * * ?")
 //    @Scheduled(cron = "0/60 * * * * ?")
     private void configureTasks() {
+        if(!isPub) return;
         log.info("执行数据查询时间: " + LocalDateTime.now());
         List<HubInfo> hubInfoList = hubInfoService.selectAll();
         if(!ObjectUtils.isEmpty(hubInfoList)) {

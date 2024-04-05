@@ -250,6 +250,16 @@ public class MyUserBot {
                 captionText = captionText.substring(0, captionText.indexOf("订单创建时间"));
                 log.info("get MessagePhoto content6: " + captionText);
             }
+            if(captionText.contains("商户订单号") && captionText.contains("系统订单号")) {
+                captionText = captionText.substring(captionText.indexOf("系统订单号") + "系统订单号".length(),
+                        captionText.indexOf("订 单  金 额")).replace(":", "").replace("：", "").trim();
+                log.info("get MessagePhoto content7: " + captionText);
+            }
+            if(captionText.contains("订单编号") && captionText.contains("订单金额")) {
+                captionText = captionText.substring(captionText.indexOf("订单编号") + "订单编号".length(),
+                        captionText.indexOf("订单金额")).replace(":", "").replace("：", "").trim();
+                log.info("get MessagePhoto content8: " + captionText);
+            }
             //进行查单动作
             confirmOrder(update, captionText, botAccount);
         }
@@ -431,8 +441,10 @@ public class MyUserBot {
      * @param botAccount
      */
     private void confirmOrder(TdApi.UpdateNewMessage update, String captionText, BotAccount botAccount) {
-        String[] captionTexts = captionText.split(" ");
+//        log.info("查单消息01：{}", update.toString());
+        String[] captionTexts = captionText.trim().split(" ");
         String orderNo = captionTexts.length > 0 ? captionTexts[0] : null;
+        log.info("查单消息02，订单号：{}", orderNo);
         String memo = captionTexts.length > 1 ? captionTexts[1] : null;
         if(botAccount == null || ObjectUtils.isEmpty(orderNo)) return;
         //TODO 查单

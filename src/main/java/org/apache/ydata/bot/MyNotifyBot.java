@@ -33,7 +33,13 @@ public class MyNotifyBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        log.info(update.toString());
+//        log.info(update.toString());
+//        String captionText = update.getMessage().getCaption();
+//        if(captionText.contains("商户订单号") && captionText.contains("系统订单号")) {
+//            captionText = captionText.substring(captionText.indexOf("系统订单号") + "系统订单号".length(),
+//                    captionText.indexOf("订 单  金 额")).replace(":", "").replace("：", "").trim();
+//            log.info("get MessagePhoto content7: " + captionText);
+//        }
         if(update.hasCallbackQuery()) {
             //处理回调
             processCallbackQuery(update);

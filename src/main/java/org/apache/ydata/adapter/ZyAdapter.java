@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.beust.jcommander.internal.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ydata.model.hub.HubInfo;
+import org.apache.ydata.model.hub.HubPayAddrRecord;
 import org.apache.ydata.model.hub.HubRechargeRecord;
 import org.apache.ydata.utils.HttpUtils;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +57,14 @@ public class ZyAdapter implements BaseAdapter {
         dataMap.put("memo", vo.getMemo());
 
         JSONObject result = HttpUtils.post(hubInfo.getApiUrl() + "/recharge", null, dataMap);
+        return result;
+    }
+
+    public JSONObject setPaymentAddr(HubInfo hubInfo, HubPayAddrRecord record) {
+        Map dataMap = Maps.newHashMap();
+        dataMap.put("newEipAddress", record.getPayAddr());
+
+        JSONObject result = HttpUtils.post(hubInfo.getApiUrl() + "/changePayEipAddress", null, dataMap);
         return result;
     }
 }

@@ -24,6 +24,6 @@ public interface HubInfoService extends BaseService {
 
     void updateByPrimaryKeySelective(HubInfo userInfo);
 
-    List<HubInfo> selectAll();
+    List<HubInfo> selectAll(Integer state);
 
 }

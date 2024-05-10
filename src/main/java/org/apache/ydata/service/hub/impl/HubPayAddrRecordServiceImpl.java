@@ -5,12 +5,11 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ydata.mapper.BaseMapper;
-import org.apache.ydata.mapper.hub.HubRechargeRecordMapper;
-import org.apache.ydata.model.hub.HubData;
+import org.apache.ydata.mapper.hub.HubPayAddrRecordMapper;
 import org.apache.ydata.model.hub.HubInfo;
-import org.apache.ydata.model.hub.HubRechargeRecord;
+import org.apache.ydata.model.hub.HubPayAddrRecord;
 import org.apache.ydata.service.hub.HubInfoService;
-import org.apache.ydata.service.hub.HubRechargeRecordService;
+import org.apache.ydata.service.hub.HubPayAddrRecordService;
 import org.apache.ydata.utils.IdUtil;
 import org.apache.ydata.utils.PageUtils;
 import org.apache.ydata.vo.PageRequest;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class HubRechargeRecordServiceImpl implements HubRechargeRecordService {
+public class HubPayAddrRecordServiceImpl implements HubPayAddrRecordService {
 
     @Resource
     private IdUtil idUtil;
@@ -36,7 +35,7 @@ public class HubRechargeRecordServiceImpl implements HubRechargeRecordService {
     private HubInfoService hubInfoService;
 
     @Resource
-    private HubRechargeRecordMapper mapper;
+    private HubPayAddrRecordMapper mapper;
 
     @Override
     public BaseMapper getMapper() {
@@ -45,7 +44,7 @@ public class HubRechargeRecordServiceImpl implements HubRechargeRecordService {
 
     @Override
     public PageResult getListByPageRequest(PageRequest pageRequest) {
-        Condition condition = new Condition(HubRechargeRecord.class);
+        Condition condition = new Condition(HubPayAddrRecord.class);
         Example.Criteria criteria = condition.createCriteria();
         if(!ObjectUtils.isEmpty(pageRequest.getUserName())) {
             HubInfo hubInfo = hubInfoService.selectByName(pageRequest.getUserName().trim());
@@ -55,7 +54,7 @@ public class HubRechargeRecordServiceImpl implements HubRechargeRecordService {
         }
         condition.setOrderByClause("id DESC");
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
-        List<HubRechargeRecord> data = mapper.selectByCondition(condition);
+        List<HubPayAddrRecord> data = mapper.selectByCondition(condition);
 
         List<HubInfo> allHubs = hubInfoService.selectAll(null);
         Map<Long, HubInfo> hubInfoDataMap = !ObjectUtils.isEmpty(allHubs) ? allHubs.stream().collect(Collectors.toMap(HubInfo::getId, HubInfo -> HubInfo)) : Maps.newHashMap();
@@ -71,7 +70,7 @@ public class HubRechargeRecordServiceImpl implements HubRechargeRecordService {
 
 
     @Override
-    public int insert(HubRechargeRecord rechargeRecord) {
-        return mapper.insert(rechargeRecord);
+    public int insert(HubPayAddrRecord record) {
+        return mapper.insert(record);
     }
 }

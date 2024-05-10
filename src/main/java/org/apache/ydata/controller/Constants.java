@@ -69,6 +69,9 @@ public interface Constants {
     String MCH_POINTS_LIST = "/admin/business/merchantpoints/list.html";
     String MCH_POINTS_ADD_OR_VIEW = "/admin/business/merchantpoints/addOrView.html";
 
+    //收银台地址
+    String BUSINESS_HUBPAYADDR_RECORD_LIST = "/admin/business/hubpayaddr/list.html";
+    String BUSINESS_HUBPAYADDR_RECORD_ADD = "/admin/business/hubpayaddr/add.html";
 
     //下单测试
     String INDEX_PAY = "/index-pay.html";

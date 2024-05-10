@@ -50,8 +50,8 @@ public class HubInfoController {
     private HubDataService hubDataService;
 
     @GetMapping(value = "/getall")
-    public Object all() {
-        return Tools.createResponse(ResponseCode.SUCCESS, "", service.selectAll());
+    public Object all(@RequestParam(required = false) Integer state) {
+        return Tools.createResponse(ResponseCode.SUCCESS, "", service.selectAll(state));
     }
 
     @PostMapping(value = "/create")

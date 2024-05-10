@@ -53,7 +53,7 @@ public class WebController {
     @GetMapping(value = Constants.ADMIN_DASHBOARD)
     public Object adminDashboard() throws ParseException {
         //统计可用三方数量，今日在做的三方数量，今日总跑量，今日总收益
-        List<HubInfo> hubInfoList = hubInfoService.selectAll();
+        List<HubInfo> hubInfoList = hubInfoService.selectAll(null);
         request.setAttribute("hubCount", !ObjectUtils.isEmpty(hubInfoList) ? hubInfoList.size() : 0);
         int avaliHub = 0;   //在做的三方数量
         double totalPayAmount = 0;  //今日总跑量
@@ -247,6 +247,16 @@ public class WebController {
     @GetMapping(value = Constants.MCH_POINTS_ADD_OR_VIEW)
     public Object mchpointsAddOrView() {
         return "business/merchantpoints/addOrView";
+    }
+
+    @GetMapping(value = Constants.BUSINESS_HUBPAYADDR_RECORD_LIST)
+    public Object hubpayaddrList() {
+        return "config/hubpayaddr/list";
+    }
+
+    @GetMapping(value = Constants.BUSINESS_HUBPAYADDR_RECORD_ADD)
+    public Object hubpayaddrAdd() {
+        return "config/hubpayaddr/add";
     }
 
     @GetMapping(value = Constants.INDEX_PAY)

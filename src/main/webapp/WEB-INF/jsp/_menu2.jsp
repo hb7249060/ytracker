@@ -38,6 +38,9 @@
 					<li <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if>>
 						<a data-href="<c:url value='/admin/business/botaccount/list.html' /> " data-title="机器人信息库" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 机器人信息库</a>
 					</li>
+					<li <c:if test="${AdminUser.created != null}"> style="display: none;" </c:if>>
+						<a data-href="<c:url value='/admin/business/hubpayaddr/list.html' /> " data-title="三方收银台配置" href="javascript:void(0)"><i class="Hui-iconfont">&#xe60a;</i> 三方收银台配置</a>
+					</li>
 				</ul>
 			</dd>
 		</dl>

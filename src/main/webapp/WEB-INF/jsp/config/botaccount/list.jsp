@@ -24,8 +24,8 @@
 <%--					<input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin" name="datemin" class="input-text Wdate" style="width:120px;">--%>
 <%--					---%>
 <%--					<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d'})" id="datemax" name="datemax" class="input-text Wdate" style="width:120px;">--%>
-					<input type="text" class="input-text" style="width:150px" placeholder="三方" id="name" name="name" list="nameList">
-					<datalist id="nameList"></datalist>
+					<input type="text" class="input-text" style="width:150px" placeholder="三方" id="name" name="name" list="userNameList">
+					<datalist id="userNameList"></datalist>
 					<span class="select-box" style="width: auto;">
 						<select class="select" size="1" name="state" id="state" style="width: auto;">
 							<option value="">请选择</option>

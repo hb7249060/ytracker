@@ -42,7 +42,7 @@ public class ScheduleTask {
     private void configureTasks() {
         if(!isPub) return;
         log.info("执行数据查询时间: " + LocalDateTime.now());
-        List<HubInfo> hubInfoList = hubInfoService.selectAll();
+        List<HubInfo> hubInfoList = hubInfoService.selectAll(1);
         if(!ObjectUtils.isEmpty(hubInfoList)) {
             long statTime = System.currentTimeMillis() - 1000;
             for(int i = 0;i<hubInfoList.size();i++) {

@@ -61,7 +61,7 @@ public class HubDataServiceImpl implements HubDataService {
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
         List<HubData> data = mapper.selectByCondition(condition);
 
-        List<HubInfo> allHubs = hubInfoService.selectAll();
+        List<HubInfo> allHubs = hubInfoService.selectAll(null);
         Map<Long, HubInfo> hubInfoDataMap = !ObjectUtils.isEmpty(allHubs) ? allHubs.stream().collect(Collectors.toMap(HubInfo::getId, HubInfo -> HubInfo)) : Maps.newHashMap();
         if(!ObjectUtils.isEmpty(data)) {
             data.forEach(item -> {

@@ -72,9 +72,13 @@ public class HubInfoServiceImpl implements HubInfoService {
     }
 
     @Override
-    public List<HubInfo> selectAll() {
+    public List<HubInfo> selectAll(Integer state) {
         Condition condition = new Condition(HubInfo.class);
-        condition.createCriteria().andNotEqualTo("state", -1);
+        Example.Criteria criteria = condition.createCriteria();
+        criteria.andNotEqualTo("state", -1);
+        if(state != null) {
+            criteria.andEqualTo("state", state);
+        }
         return mapper.selectByCondition(condition);
     }
 

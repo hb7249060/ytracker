@@ -37,6 +37,7 @@ public class HttpUtils {
             .build();
 
     public static JSONObject post(String postUrl, Map<String, String> headerMap, Map<String, String> dataMap) {
+        log.info("Post={}", postUrl);
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 
@@ -60,7 +61,7 @@ public class HttpUtils {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(bodyMap, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(postUrl, request, String.class);
         String content = response.getBody();
-        log.info("Post={}, result={}", postUrl, content);
+        log.info("Result={}", content);
         return JSONObject.parseObject(content);
     }
 

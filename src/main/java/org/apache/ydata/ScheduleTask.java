@@ -45,15 +45,18 @@ public class ScheduleTask {
         List<HubInfo> hubInfoList = hubInfoService.selectAll();
         if(!ObjectUtils.isEmpty(hubInfoList)) {
             long statTime = System.currentTimeMillis() - 1000;
-            hubInfoList.forEach(item -> {
+            for(int i = 0;i<hubInfoList.size();i++) {
+                HubInfo item = hubInfoList.get(i);
+                if(item.getState().intValue() != 1) continue;
                 try {
+                    Thread.sleep(3000);
                     JSONObject jsonObject = zyAdapter.stat(item, Tools.timeDateString(statTime, "yyyy-MM-dd"));
                     //解析并写入库
                     hubDataService.insertOrUpdate(item, jsonObject);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            });
+            }
         }
     }
 }

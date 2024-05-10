@@ -260,6 +260,11 @@ public class MyUserBot {
                         captionText.indexOf("订单金额")).replace(":", "").replace("：", "").trim();
                 log.info("get MessagePhoto content8: " + captionText);
             }
+            if(captionText.contains("系统") && captionText.contains("订单金额")) {
+                captionText = captionText.substring(captionText.indexOf("系统") + "系统".length(),
+                        captionText.indexOf("订单金额")).replace(":", "").replace("：", "").trim();
+                log.info("get MessagePhoto content9: " + captionText);
+            }
             //进行查单动作
             confirmOrder(update, captionText, botAccount);
         }

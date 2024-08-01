@@ -33,6 +33,12 @@
 					</div>
 				</div>
 				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-2"style="font-weight: bold;color: red;">内容替换词：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<textarea id="BOT_REPLACE_FILTER_WORDS" name="BOT_REPLACE_FILTER_WORDS" cols="" rows="" class="textarea"  placeholder="内容替换词，|分隔"></textarea>
+					</div>
+				</div>
+				<div class="row cl">
 					<div class="col-xs-10 col-sm-9 col-xs-offset-4 col-sm-offset-3">
 						<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;保存&nbsp;&nbsp;">
 					</div>
@@ -76,6 +82,7 @@ $(function(){
 				if (obj != null) {
 					$("#ALARM_BOT_TARGET_CHAT_IDS").val(obj.ALARM_BOT_TARGET_CHAT_IDS);
 					$("#BOT_ANALYSIS_FILTER_WORDS").val(obj.BOT_ANALYSIS_FILTER_WORDS);
+					$("#BOT_REPLACE_FILTER_WORDS").val(obj.BOT_REPLACE_FILTER_WORDS);
 				}
 			},
 			beforeSend: function (xhr) {

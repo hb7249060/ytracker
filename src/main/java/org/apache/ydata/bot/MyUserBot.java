@@ -1,6 +1,7 @@
 package org.apache.ydata.bot;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.beust.jcommander.internal.Lists;
 import it.tdlight.Init;
 import it.tdlight.client.*;
 import it.tdlight.jni.TdApi;
@@ -28,6 +29,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -238,8 +241,23 @@ public class MyUserBot {
                         captionText = captionText.replaceAll(word, "");
                     }
                 }
-                captionText = captionText.replaceAll("\n", "");
             }
+
+//        captionText = captionText.replaceAll("\n", "");
+            List<String> texts = Lists.newArrayList();
+            String[] captionTexts = captionText.split("[ ]");
+            for(String text : captionTexts) {
+                if(isLetterDigit(text)) {
+                    texts.add(text);
+                }
+            }
+            captionTexts = captionText.split("\n");
+            for(String text : captionTexts) {
+                if(isLetterDigit(text)) {
+                    texts.add(text);
+                }
+            }
+            captionText = !ObjectUtils.isEmpty(texts) ? texts.get(0) : captionText.replaceAll("\n", "");
             log.info("get MessagePhoto content4: " + captionText);
             if(captionText.contains("系统订单号") && captionText.contains("通道订单号")) {
                 captionText = captionText.substring(captionText.indexOf("系统订单号") + "系统订单号".length(),
@@ -265,9 +283,61 @@ public class MyUserBot {
                         captionText.indexOf("订单金额")).replace(":", "").replace("：", "").trim();
                 log.info("get MessagePhoto content9: " + captionText);
             }
-            //进行查单动作
-            confirmOrder(update, captionText, botAccount);
+            if(captionText.contains("单号") && captionText.contains("订单金额")) {
+                captionText = captionText.substring(captionText.indexOf("单号") + "单号".length(),
+                        captionText.indexOf("订单金额")).replace(":", "").replace("：", "").trim();
+                log.info("get MessagePhoto content10: " + captionText);
+            }
+            if(captionText.contains("支付途径")) {
+                captionText = captionText.substring(0, captionText.indexOf("支付途径")).trim();
+                log.info("get MessagePhoto content11: " + captionText);
+            }
+            if(captionText.contains("备注")) {
+                captionText = captionText.substring(0, captionText.indexOf("备注")).trim();
+                log.info("get MessagePhoto content12: " + captionText);
+            }
+
+            captionText = captionText.replace("：", ":").trim();
+            if(captionText.contains(":")) {
+                String[] txts = captionText.split(":");
+                for(String txt : txts) {
+                    if(isLetterDigit(txt) && txt.length() >= 8) {
+                        captionText = txt;
+                        break;
+                    }
+                }
+            }
+            if(isContainChinese(captionText)) {
+                log.info("转发查单失败: {}", captionText);
+                //回复需要匹配
+                String message = "转发查单失败，订单号解析错误，请联系技术匹配！";
+                replyGroupMessage(update, message);
+            } else {
+                //进行查单动作
+                confirmOrder(update, captionText, botAccount);
+            }
         }
+    }
+
+    /**
+     * 校验数字英文
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isLetterDigit(String str) {
+        String regex = "^[a-z0-9A-Z]+$";
+        return str.matches(regex);
+    }
+
+    public static boolean isContainChinese(String str) {
+
+        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+        Matcher m = p.matcher(str);
+        if (m.find()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -516,6 +586,16 @@ public class MyUserBot {
                 if(!ObjectUtils.isEmpty(file.get().local.path)) {
                     //TODO 機器人發送消息
                     String caption = messagePhoto.caption.text;
+                    //先进行文本替换
+                    String filterWords = redisUtils.getSysConfig(SystemSettingsKeys.BOT_REPLACE_FILTER_WORDS);
+                    if(!ObjectUtils.isEmpty(filterWords)) {
+                        List<String> filterWordList = Arrays.asList(filterWords.split("[|]"));
+                        if(!ObjectUtils.isEmpty(filterWordList)) {
+                            for (String word : filterWordList) {
+                                caption = caption.replaceAll(word, "");
+                            }
+                        }
+                    }
                     if(data.containsKey("channelCodeName")) {
                         caption += "\n订单通道：" + data.getString("channelCodeName");
                     }

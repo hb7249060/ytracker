@@ -8,11 +8,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -131,5 +141,51 @@ public class BotMsgSender {
         }
         //TODO 用户机器人回复：商户群原查单消息
         myUserBot.replayCallbackQuery(chatId, msgId, msg);
+    }
+
+    /**
+     * 使用通知机器人发送图文消息
+     * @param notifyBot
+     * @param localFilepath
+     * @param captionText
+     * @param notifyChatId
+     * @param orderNo
+     */
+    public void sendNotifyImageText(MyNotifyBot notifyBot, String localFilepath, String captionText, Long notifyChatId, String orderNo) {
+        if(ObjectUtils.isEmpty(orderNo)) {
+            orderNo = MyNotifyBot.DEFAULT_ORDER_NO;   //兼容旧代码防止order为空情况
+        }
+        //内联菜单
+        InlineKeyboardButton button1 = InlineKeyboardButton.builder().text(MyNotifyBot.CALLBACK_ORDER_SUCCESS_TEXT).callbackData(MyNotifyBot.CALLBACK_ORDER_SUCCESS + orderNo).build();
+        InlineKeyboardButton button2 = InlineKeyboardButton.builder().text(MyNotifyBot.CALLBACK_ORDER_FAIL_TEXT).callbackData(MyNotifyBot.CALLBACK_ORDER_FAIL + orderNo).build();
+        InlineKeyboardButton button3 = InlineKeyboardButton.builder().text(MyNotifyBot.CALLBACK_ORDER_MISMATCH_TEXT).callbackData(MyNotifyBot.CALLBACK_ORDER_MISMATCH + orderNo).build();
+        InlineKeyboardButton button4 = InlineKeyboardButton.builder().text(MyNotifyBot.CALLBACK_ORDER_MODIFYFEE_TEXT).callbackData(MyNotifyBot.CALLBACK_ORDER_MODIFYFEE + orderNo).build();
+        InlineKeyboardButton button5 = InlineKeyboardButton.builder().text(MyNotifyBot.CALLBACK_ORDER_OTHER_EXCPTION_TEXT).callbackData(MyNotifyBot.CALLBACK_ORDER_OTHER_EXCPTION + orderNo).build();
+        List<InlineKeyboardButton> list1 = new ArrayList<>();
+        list1.add(button1);
+        list1.add(button2);
+        List<InlineKeyboardButton> list2 = new ArrayList<>();
+        list2.add(button3);
+        list2.add(button4);
+        list2.add(button5);
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        Collections.addAll(rowList, list1, list2);
+        InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder().keyboard(rowList).build();
+
+        //图文消息
+        SendPhoto sendPhoto = new SendPhoto();
+        sendPhoto.setPhoto(new InputFile(new File(localFilepath)));
+        sendPhoto.setCaption(captionText);
+        sendPhoto.setReplyMarkup(inlineKeyboardMarkup);
+        sendPhoto.setChatId(notifyChatId);
+        try {
+            Message message = notifyBot.execute(sendPhoto);
+            //将msg与
+            //TODO 将orderNo 对应的 msgid 和 chatid 放入redis中绑定[有效期72小时]，用于回调响应
+            redisTemplate.opsForValue().set("NOTIFY:" + orderNo, message.getChatId() + ":" + message.getMessageId(),
+                    72, TimeUnit.HOURS);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

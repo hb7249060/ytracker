@@ -100,49 +100,19 @@ public class MyNotifyBot extends TelegramLongPollingBot {
         return this.token;
     }
 
-    private static final String CALLBACK_ORDER_SUCCESS = "order:success:";
-    private static final String CALLBACK_ORDER_SUCCESS_TEXT = "已补单";
-    private static final String CALLBACK_ORDER_FAIL = "order:fail:";
-    private static final String CALLBACK_ORDER_FAIL_TEXT = "未付款";
-    private static final String CALLBACK_ORDER_MISMATCH = "order:mismatch:";
-    private static final String CALLBACK_ORDER_MISMATCH_TEXT = "单图不符";
-    private static final String CALLBACK_ORDER_MODIFYFEE = "order:modifyfee:";
-    private static final String CALLBACK_ORDER_MODIFYFEE_TEXT = "修改金额";
-    private static final String CALLBACK_ORDER_OTHER_EXCPTION = "order:otherexception:";
-    private static final String CALLBACK_ORDER_OTHER_EXCPTION_TEXT = "其它异常";
-    private static final String DEFAULT_ORDER_NO = "0123456789ABCDEFG";
+    public static final String CALLBACK_ORDER_SUCCESS = "order:success:";
+    public static final String CALLBACK_ORDER_SUCCESS_TEXT = "已补单";
+    public static final String CALLBACK_ORDER_FAIL = "order:fail:";
+    public static final String CALLBACK_ORDER_FAIL_TEXT = "未付款";
+    public static final String CALLBACK_ORDER_MISMATCH = "order:mismatch:";
+    public static final String CALLBACK_ORDER_MISMATCH_TEXT = "单图不符";
+    public static final String CALLBACK_ORDER_MODIFYFEE = "order:modifyfee:";
+    public static final String CALLBACK_ORDER_MODIFYFEE_TEXT = "修改金额";
+    public static final String CALLBACK_ORDER_OTHER_EXCPTION = "order:otherexception:";
+    public static final String CALLBACK_ORDER_OTHER_EXCPTION_TEXT = "其它异常";
+    public static final String DEFAULT_ORDER_NO = "0123456789ABCDEFG";
 
     public void sendImageText(String localFilepath, String captionText, Long notifyChatId, String orderNo) {
-        if(ObjectUtils.isEmpty(orderNo)) {
-            orderNo = DEFAULT_ORDER_NO;   //兼容旧代码防止order为空情况
-        }
-        //内联菜单
-        InlineKeyboardButton button1 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_SUCCESS_TEXT).callbackData(CALLBACK_ORDER_SUCCESS + orderNo).build();
-        InlineKeyboardButton button2 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_FAIL_TEXT).callbackData(CALLBACK_ORDER_FAIL + orderNo).build();
-        InlineKeyboardButton button3 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_MISMATCH_TEXT).callbackData(CALLBACK_ORDER_MISMATCH + orderNo).build();
-        InlineKeyboardButton button4 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_MODIFYFEE_TEXT).callbackData(CALLBACK_ORDER_MODIFYFEE + orderNo).build();
-        InlineKeyboardButton button5 = InlineKeyboardButton.builder().text(CALLBACK_ORDER_OTHER_EXCPTION_TEXT).callbackData(CALLBACK_ORDER_OTHER_EXCPTION + orderNo).build();
-        List<InlineKeyboardButton> list1 = new ArrayList<>();
-        list1.add(button1);
-        list1.add(button2);
-        List<InlineKeyboardButton> list2 = new ArrayList<>();
-        list2.add(button3);
-        list2.add(button4);
-        list2.add(button5);
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        Collections.addAll(rowList, list1, list2);
-        InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder().keyboard(rowList).build();
-
-        //图文消息
-        SendPhoto sendPhoto = new SendPhoto();
-        sendPhoto.setPhoto(new InputFile(new File(localFilepath)));
-        sendPhoto.setCaption(captionText);
-        sendPhoto.setReplyMarkup(inlineKeyboardMarkup);
-        sendPhoto.setChatId(notifyChatId);
-        try {
-            execute(sendPhoto);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
+        mBotMsgSender.sendNotifyImageText(this, localFilepath, captionText, notifyChatId, orderNo);
     }
 }

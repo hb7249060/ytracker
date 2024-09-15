@@ -26,7 +26,10 @@ public class Test {
 //        String captionText = "JL0625183748VZusueDGrV\n" +
 //                "支付途径:古澜支付宝[21925990|8]";
 //        String captionText = "订单反馈\n订单ID：JL0625183748VZusueDGrV";
-        String captionText = "DF2024062612215551514917";
+        String captionText = "订单编号: WD5893055864750776870\n" +
+                "通道名称: 支付宝中额uid \n" +
+                "订单金额: 1000.00 \n" +
+                "订单状态: 未付款";
 
         log.info("get MessagePhoto content3: " + captionText);
         //分析消息内容
@@ -45,13 +48,8 @@ public class Test {
 
 //        captionText = captionText.replaceAll("\n", "");
         List<String> texts = Lists.newArrayList();
-        String[] captionTexts = captionText.split("[ ]");
-        for(String text : captionTexts) {
-            if(isLetterDigit(text)) {
-                texts.add(text);
-            }
-        }
-        captionTexts = captionText.split("\n");
+        captionText = captionText.replaceAll("[ ]", "\n");
+        String[] captionTexts = captionText.split("\n");
         for(String text : captionTexts) {
             if(isLetterDigit(text)) {
                 texts.add(text);
@@ -127,7 +125,7 @@ public class Test {
      */
     public static boolean isLetterDigit(String str) {
         String regex = "^[a-z0-9A-Z]+$";
-        return str.matches(regex);
+        return str.trim().matches(regex);
     }
 
     public static boolean isContainChinese(String str) {

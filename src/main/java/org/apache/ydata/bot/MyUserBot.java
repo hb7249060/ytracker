@@ -245,18 +245,14 @@ public class MyUserBot {
 
 //        captionText = captionText.replaceAll("\n", "");
             List<String> texts = Lists.newArrayList();
-            String[] captionTexts = captionText.split("[ ]");
+            captionText = captionText.replaceAll("[ ]", "\n");
+            String[] captionTexts = captionText.split("\n");
             for(String text : captionTexts) {
                 if(isLetterDigit(text)) {
                     texts.add(text);
                 }
             }
-            captionTexts = captionText.split("\n");
-            for(String text : captionTexts) {
-                if(isLetterDigit(text)) {
-                    texts.add(text);
-                }
-            }
+
             captionText = !ObjectUtils.isEmpty(texts) ? texts.get(0) : captionText.replaceAll("\n", "");
             log.info("get MessagePhoto content4: " + captionText);
             if(captionText.contains("系统订单号") && captionText.contains("通道订单号")) {
@@ -327,7 +323,7 @@ public class MyUserBot {
      */
     public static boolean isLetterDigit(String str) {
         String regex = "^[a-z0-9A-Z]+$";
-        return str.matches(regex);
+        return str.trim().matches(regex);
     }
 
     public static boolean isContainChinese(String str) {
@@ -520,6 +516,14 @@ public class MyUserBot {
         String[] captionTexts = captionText.trim().split(" ");
         String orderNo = captionTexts.length > 0 ? captionTexts[0] : null;
         log.info("查单消息02，订单号：{}", orderNo);
+//        if(update.message.content instanceof TdApi.MessagePhoto) {
+//            TdApi.MessagePhoto messagePhoto = (TdApi.MessagePhoto) update.message.content;
+//            String txt = messagePhoto.caption.text.replace(orderNo, "").trim();
+//            if(!ObjectUtils.isEmpty(txt) && txt.length() > 3) {
+//                //四方系统需求：>3 无法转发， <=3文字可转
+//                return;
+//            }
+//        }
         String memo = captionTexts.length > 1 ? captionTexts[1] : null;
         if(botAccount == null || ObjectUtils.isEmpty(orderNo)) return;
         //TODO 查单

@@ -58,7 +58,7 @@ public class CallbackController {
             String chatAndMsgId = (String) redisTemplate.opsForValue().get(orderNo);
             String chatId = chatAndMsgId.split(":")[0];
             String msgId = chatAndMsgId.split(":")[1];
-            myUserBot.replayCallbackQuery(chatId, msgId, "已补单【系统消息】");
+            myUserBot.replayCallbackQuery(chatId, msgId,  orderNo + " 已补单【系统消息】");
         }
 
         //notify bot 相关信息
@@ -81,7 +81,7 @@ public class CallbackController {
             EditMessageCaption editMessageCaption = new EditMessageCaption();
             editMessageCaption.setChatId(notifyChatId);
             editMessageCaption.setMessageId(Integer.parseInt(notifyMsgId));
-            editMessageCaption.setCaption(MyNotifyBot.CALLBACK_ORDER_SUCCESS_TEXT + "【系统消息】");
+            editMessageCaption.setCaption(orderNo + " " + MyNotifyBot.CALLBACK_ORDER_SUCCESS_TEXT + "【系统消息】");
             try {
                 botStater.getNotifyBot().execute(editMessageCaption);
             } catch (TelegramApiException e) {

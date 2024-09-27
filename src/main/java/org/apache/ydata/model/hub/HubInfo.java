@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @Data
 @Entity
-@Table(name = "hub_info")
+@Table(name = "hub_info", indexes = {@Index(columnList ="chatId")})
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class HubInfo implements Serializable {
 
@@ -33,6 +33,9 @@ public class HubInfo implements Serializable {
 
     @Column(columnDefinition = "TEXT COMMENT '备注'")
     String memo;
+
+    @Column(columnDefinition = "BIGINT COMMENT '系统支撑TG群组id'")
+    Long chatId;
 
     @Column(columnDefinition = "BIGINT COMMENT '创建时间'")
     Long created;

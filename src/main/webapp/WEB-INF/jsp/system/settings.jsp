@@ -39,6 +39,24 @@
 					</div>
 				</div>
 				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-2"style="font-weight: bold;color: red;">系统费充值地址：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input id="RECHARGE_ADDR" name="RECHARGE_ADDR" class="input-text" />
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-2"style="font-weight: bold;color: red;">充值地址图片：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input id="RECHARGE_ADDR_IMG_URL" name="RECHARGE_ADDR_IMG_URL" class="input-text" />
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-4 col-sm-2"style="font-weight: bold;color: red;">充值机器人操作员：</label>
+					<div class="formControls col-xs-8 col-sm-9">
+						<input id="RECHARGE_BOT_OPER" name="RECHARGE_BOT_OPER" class="input-text" />
+					</div>
+				</div>
+				<div class="row cl">
 					<div class="col-xs-10 col-sm-9 col-xs-offset-4 col-sm-offset-3">
 						<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;保存&nbsp;&nbsp;">
 					</div>
@@ -83,6 +101,9 @@ $(function(){
 					$("#ALARM_BOT_TARGET_CHAT_IDS").val(obj.ALARM_BOT_TARGET_CHAT_IDS);
 					$("#BOT_ANALYSIS_FILTER_WORDS").val(obj.BOT_ANALYSIS_FILTER_WORDS);
 					$("#BOT_REPLACE_FILTER_WORDS").val(obj.BOT_REPLACE_FILTER_WORDS);
+					$("#RECHARGE_ADDR").val(obj.RECHARGE_ADDR);
+					$("#RECHARGE_ADDR_IMG_URL").val(obj.RECHARGE_ADDR_IMG_URL);
+					$("#RECHARGE_BOT_OPER").val(obj.RECHARGE_BOT_OPER);
 				}
 			},
 			beforeSend: function (xhr) {

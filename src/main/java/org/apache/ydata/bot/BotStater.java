@@ -1,6 +1,8 @@
 package org.apache.ydata.bot;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ydata.bot.mmutils.MMMsgReceiver;
+import org.apache.ydata.bot.mmutils.MMMsgSender;
 import org.apache.ydata.service.RedisUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,7 @@ import javax.annotation.Resource;
 @Configuration
 public class BotStater {
 
+    //报警机器人
     @Value("${config.telegram.alarmBot.enable}")
     private boolean alarmBotEnable;
     @Value("${config.telegram.alarmBot.username}")
@@ -22,6 +25,15 @@ public class BotStater {
     @Value("${config.telegram.alarmBot.token}")
     private String alarmBotToken;
 
+    //自用机器人
+    @Value("${config.telegram.mmBot.enable}")
+    private boolean mmBotEnable;
+    @Value("${config.telegram.mmBot.username}")
+    private String mmBotUsername;
+    @Value("${config.telegram.mmBot.token}")
+    private String mmBotToken;
+
+    //通知机器人
     @Value("${config.telegram.notifyBot.enable}")
     private boolean notifyBotEnable;
     @Value("${config.telegram.notifyBot.username}")
@@ -42,9 +54,17 @@ public class BotStater {
     private BotMsgReceiver botMsgReceiver;
 
     @Resource
+    private MMMsgSender mmMsgSender;
+    @Resource
+    private MMMsgReceiver mmMsgReceiver;
+
+    @Resource
     private MyUserBot myUserBot;
 
     private MyNotifyBot notifyBot;
+
+    private MMBot mmBot;
+
     private MyAlarmBot alarmBot;
 
     @PostConstruct
@@ -55,6 +75,12 @@ public class BotStater {
                 MyAlarmBot myAlarmBot = new MyAlarmBot(botMsgReceiver, botMsgSender, alarmBotUsername, alarmBotToken);
                 telegramBotsApi.registerBot(myAlarmBot);
                 alarmBot = myAlarmBot;
+            }
+            if(mmBotEnable) {
+                MMBot mmBotEntity = new MMBot(mmMsgReceiver, mmMsgSender, mmBotUsername, mmBotToken);
+                telegramBotsApi.registerBot(mmBotEntity);
+                mmMsgSender.setMmBot(mmBotEntity);
+                mmBot = mmBotEntity;
             }
             if(notifyBotEnable) {
                 MyNotifyBot myNotifyBot = new MyNotifyBot(botMsgReceiver, botMsgSender, notifyBotUsername, notifyBotToken);

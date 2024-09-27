@@ -34,8 +34,8 @@ public class BotAccountServiceImpl implements BotAccountService {
     public PageResult getListByPageRequest(PageRequest pageRequest) {
         Condition condition = new Condition(BotAccount.class);
         Example.Criteria criteria = condition.createCriteria();
-        if(!ObjectUtils.isEmpty(pageRequest.getUserName())) {
-            criteria.andEqualTo("username", pageRequest.getUserName());
+        if(!ObjectUtils.isEmpty(pageRequest.getName())) {
+            criteria.andEqualTo("username", pageRequest.getName());
         }
         condition.setOrderByClause("id ASC");
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());

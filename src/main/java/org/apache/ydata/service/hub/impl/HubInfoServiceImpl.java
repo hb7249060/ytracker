@@ -37,8 +37,8 @@ public class HubInfoServiceImpl implements HubInfoService {
     public PageResult getListByPageRequest(PageRequest pageRequest) {
         Condition condition = new Condition(HubInfo.class);
         Example.Criteria criteria = condition.createCriteria();
-        if(!ObjectUtils.isEmpty(pageRequest.getUserName())) {
-            criteria.andEqualTo("name", pageRequest.getUserName());
+        if(!ObjectUtils.isEmpty(pageRequest.getName())) {
+            criteria.andEqualTo("name", pageRequest.getName());
         }
         if(pageRequest.getState() != null) {
             criteria.andEqualTo("state", pageRequest.getState());
@@ -80,6 +80,16 @@ public class HubInfoServiceImpl implements HubInfoService {
             criteria.andEqualTo("state", state);
         }
         return mapper.selectByCondition(condition);
+    }
+
+    @Override
+    public HubInfo selectByChatId(Long chatId) {
+        Condition condition = new Condition(HubInfo.class);
+        Example.Criteria criteria = condition.createCriteria();
+        criteria.andEqualTo("chatId", chatId);
+        condition.orderBy("id").desc();
+        List<HubInfo> hubInfoList = mapper.selectByCondition(condition);
+        return !ObjectUtils.isEmpty(hubInfoList) ? hubInfoList.get(0) : null;
     }
 
     @Override

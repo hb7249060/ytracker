@@ -46,8 +46,8 @@ public class HubPayAddrRecordServiceImpl implements HubPayAddrRecordService {
     public PageResult getListByPageRequest(PageRequest pageRequest) {
         Condition condition = new Condition(HubPayAddrRecord.class);
         Example.Criteria criteria = condition.createCriteria();
-        if(!ObjectUtils.isEmpty(pageRequest.getUserName())) {
-            HubInfo hubInfo = hubInfoService.selectByName(pageRequest.getUserName().trim());
+        if(!ObjectUtils.isEmpty(pageRequest.getName())) {
+            HubInfo hubInfo = hubInfoService.selectByName(pageRequest.getName().trim());
             if(hubInfo != null) {
                 criteria.andEqualTo("hubId", hubInfo.getId());
             }

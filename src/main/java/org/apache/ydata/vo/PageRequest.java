@@ -16,6 +16,7 @@ public class PageRequest {
     private String hubId;
     private String userIp;
     private String userName;
+    private String name;
     private String eventType;
     private String checkCode;
     private String channelCode;
@@ -169,12 +170,21 @@ public class PageRequest {
         pageRequest.minpoints = pageVo.getMinpoints();
         pageRequest.maxpoints = pageVo.getMaxpoints();
         pageRequest.parentId = pageVo.getParentId();
+        pageRequest.name = pageVo.getName();
         return pageRequest;
     }
 
     public PageRequest(int pageNum, int pageSize) {
         this.pageNum = pageNum;
         this.pageSize = pageSize;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getStatDate() {

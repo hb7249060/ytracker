@@ -48,8 +48,8 @@ public class HubDataServiceImpl implements HubDataService {
     public PageResult getListByPageRequest(PageRequest pageRequest) {
         Condition condition = new Condition(HubData.class);
         Example.Criteria criteria = condition.createCriteria();
-        if(!ObjectUtils.isEmpty(pageRequest.getUserName())) {
-            HubInfo hubInfo = hubInfoService.selectByName(pageRequest.getUserName().trim());
+        if(!ObjectUtils.isEmpty(pageRequest.getName())) {
+            HubInfo hubInfo = hubInfoService.selectByName(pageRequest.getName().trim());
             if(hubInfo != null) {
                 criteria.andEqualTo("hubId", hubInfo.getId());
             }
@@ -138,6 +138,7 @@ public class HubDataServiceImpl implements HubDataService {
         Example.Criteria criteria = condition.createCriteria();
         criteria.andEqualTo("statDate", statDate.replaceAll("-", ""));
         criteria.andIn("hubId", hubIds);
+        condition.setOrderByClause("stat_date DESC, benfit DESC");
         return mapper.selectByCondition(condition);
     }
 

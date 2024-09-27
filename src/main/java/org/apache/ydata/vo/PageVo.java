@@ -30,6 +30,15 @@ public class PageVo {
     private Double minpoints;
     private Double maxpoints;
     private Long parentId;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getHubId() {
         return hubId;

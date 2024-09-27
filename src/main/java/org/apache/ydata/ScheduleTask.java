@@ -3,6 +3,8 @@ package org.apache.ydata;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ydata.adapter.ZyAdapter;
+import org.apache.ydata.bot.mmutils.MMMsgSender;
+import org.apache.ydata.model.hub.HubData;
 import org.apache.ydata.model.hub.HubInfo;
 import org.apache.ydata.service.hub.HubDataService;
 import org.apache.ydata.service.hub.HubInfoService;
@@ -37,6 +39,9 @@ public class ScheduleTask {
     @Value("${config.isPub}")
     private boolean isPub;
 
+    @Resource
+    private MMMsgSender mmMsgSender;
+
     @Scheduled(cron = "0 0/30 * * * ?")
 //    @Scheduled(cron = "0/60 * * * * ?")
     private void configureTasks() {
@@ -52,7 +57,12 @@ public class ScheduleTask {
                     Thread.sleep(3000);
                     JSONObject jsonObject = zyAdapter.stat(item, Tools.timeDateString(statTime, "yyyy-MM-dd"));
                     //解析并写入库
-                    hubDataService.insertOrUpdate(item, jsonObject);
+                    HubData hubData = hubDataService.insertOrUpdate(item, jsonObject);
+                    //针对余额低于300元，进行主动预警
+                    if(hubData != null && !ObjectUtils.isEmpty(item.getChatId()) && hubData.getSysBalance() < 300) {
+                        mmMsgSender.send(String.valueOf(item.getChatId()),
+                                String.format("系统当前余额 %s，已不足300，请及时充值，以免影响使用！", String.valueOf(hubData.getSysBalance())));
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

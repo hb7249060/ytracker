@@ -26,4 +26,5 @@ public interface HubInfoService extends BaseService {
 
     List<HubInfo> selectAll(Integer state);
 
+    HubInfo selectByChatId(Long chatId);
 }

@@ -44,8 +44,8 @@ public class HubGroupServiceImpl implements HubGroupService {
     public PageResult getListByPageRequest(PageRequest pageRequest) {
         Condition condition = new Condition(HubGroup.class);
         Example.Criteria criteria = condition.createCriteria();
-        if(!ObjectUtils.isEmpty(pageRequest.getUserName())) {
-            criteria.andEqualTo("name", pageRequest.getUserName());
+        if(!ObjectUtils.isEmpty(pageRequest.getName())) {
+            criteria.andEqualTo("name", pageRequest.getName());
         }
         if(pageRequest.getState() != null) {
             criteria.andEqualTo("state", pageRequest.getState());
